@@ -63,7 +63,7 @@ jobs:
       - name: Package dist directory
         run: |
           if [[ ! -d dist ]]; then
-            echo "dist directory not found after build"
+            echo "Error: dist directory not found after build. Ensure the build script outputs files to dist/."
             exit 1
           fi
           cd dist
