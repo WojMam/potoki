@@ -48,13 +48,18 @@ jobs:
           else
             TAG="${{ github.event.inputs.tag }}"
           fi
+          if [[ -z "${TAG}" ]]; then
+            echo "Error: release tag is empty. Provide a tag in workflow_dispatch or run on a tag push."
+            exit 1
+          fi
+          SAFE_TAG="$(echo "${TAG}" | sed 's/[^A-Za-z0-9._-]/-/g')"
 
           RELEASE_NAME="${{ github.event.inputs.release_name }}"
           if [[ -z "${RELEASE_NAME}" ]]; then
             RELEASE_NAME="Release ${TAG}"
           fi
 
-          ZIP_NAME="${APP_NAME}-${TAG}.zip"
+          ZIP_NAME="${APP_NAME}-${SAFE_TAG}.zip"
 
           echo "tag=${TAG}" >> "${GITHUB_OUTPUT}"
           echo "release_name=${RELEASE_NAME}" >> "${GITHUB_OUTPUT}"
