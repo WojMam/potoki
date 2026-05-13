@@ -44,6 +44,20 @@ npm run preview
 
 After building, copy the `dist` folder to the target machine and open `dist/index.html` in Chrome or Edge. At runtime there is no server, database, authentication, telemetry, or network dependency.
 
+## GitHub Pages
+
+This repository includes a GitHub Actions workflow at `.github/workflows/deploy-pages.yml` that:
+
+1. installs dependencies with `npm ci`,
+2. builds the app with `npm run build`,
+3. deploys the `dist` directory to GitHub Pages.
+
+To enable deployment:
+
+1. go to repository **Settings** → **Pages**,
+2. set **Source** to **GitHub Actions**,
+3. push to `main` (or run the workflow manually from the **Actions** tab).
+
 ## Demo Workspace
 
 The repository includes `demoWorkspace`, a ready-to-open sample workspace with populated streams, timelines, Markdown notes, and linked artifact placeholders. In the app, choose `Open workspace folder` and select `demoWorkspace` to explore realistic POTOKI data.
