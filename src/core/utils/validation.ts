@@ -1,16 +1,13 @@
 import type { TimelineEntry, TimelineFile } from "../models/timeline";
 import { timelineEntryTypes } from "../models/timeline";
 import type { Workstream } from "../models/workstream";
-import { workstreamPriorities, workstreamStatuses } from "../models/workstream";
+import { workstreamStatuses } from "../models/workstream";
 import type { WorkspaceManifest } from "../models/workspace";
 
 export type ValidationResult<T> = { ok: true; value: T } | { ok: false; errors: string[] };
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value);
-
-const isStringArray = (value: unknown): value is string[] =>
-  Array.isArray(value) && value.every((item) => typeof item === "string");
 
 const isLinkedFiles = (value: unknown) =>
   Array.isArray(value) &&
@@ -47,12 +44,34 @@ export function validateWorkstream(value: unknown): ValidationResult<Workstream>
   ["id", "title", "description", "currentContext", "createdAt", "updatedAt"].forEach((key) =>
     requireString(value, key, errors),
   );
-  if (!workstreamStatuses.includes(value.status as never)) errors.push("status is invalid");
-  if (!workstreamPriorities.includes(value.priority as never)) errors.push("priority is invalid");
-  if (!isStringArray(value.tags)) errors.push("tags must be an array of strings");
-  if (!isStringArray(value.nextActions)) errors.push("nextActions must be an array of strings");
+  const normalizedStatus = normalizeWorkstreamStatus(value.status);
+  if (!workstreamStatuses.includes(normalizedStatus as never)) errors.push("status is invalid");
+  if (!Array.isArray(value.nextActions) || !value.nextActions.every((item) => typeof item === "string")) {
+    errors.push("nextActions must be an array of strings");
+  }
   if (!isLinkedFiles(value.linkedFiles)) errors.push("linkedFiles must be valid linked file metadata");
-  return errors.length ? { ok: false, errors } : { ok: true, value: value as Workstream };
+  return errors.length
+    ? { ok: false, errors }
+    : {
+        ok: true,
+        value: {
+          id: value.id as string,
+          title: value.title as string,
+          description: value.description as string,
+          status: normalizedStatus,
+          currentContext: value.currentContext as string,
+          nextActions: value.nextActions as string[],
+          linkedFiles: value.linkedFiles as Workstream["linkedFiles"],
+          createdAt: value.createdAt as string,
+          updatedAt: value.updatedAt as string,
+        },
+      };
+}
+
+function normalizeWorkstreamStatus(status: unknown): Workstream["status"] {
+  if (status === "archived" || status === "done") return "archived";
+  if (status === "parked" || status === "waiting" || status === "paused") return "parked";
+  return "active";
 }
 
 export function validateTimeline(value: unknown, streamId: string): ValidationResult<TimelineFile> {

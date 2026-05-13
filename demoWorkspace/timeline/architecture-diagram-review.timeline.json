@@ -36,8 +36,8 @@
     {
       "id": "entry-arch-003",
       "streamId": "architecture-diagram-review",
-      "type": "waiting",
-      "title": "Paused for deployment notes",
+      "type": "note",
+      "title": "Parked for deployment notes",
       "content": "Need confirmation from deployment notes before changing the archive portion of the diagram.",
       "createdAt": "2026-05-12T09:30:00.000Z",
       "linkedFiles": []

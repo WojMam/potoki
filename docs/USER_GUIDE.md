@@ -16,11 +16,11 @@ Use the left panel to search, filter, select, or create streams. A workstream re
 
 ## Timeline
 
-The center panel shows the selected stream's timeline grouped by date. Add notes, decisions, completed actions, waiting updates, file links, and lightweight work logs.
+The center panel shows the selected stream's timeline grouped by date. Add notes, decisions, completed work, parked context notes, file links, and lightweight work logs.
 
 ## Summary
 
-The right panel is the editable stream summary. It contains status, priority, tags, current context, next actions, linked files, and quick actions.
+The right panel is the editable context snapshot. It contains current context, resume notes, linked files, and quick actions.
 
 ## Markdown Notes
 

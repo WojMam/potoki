@@ -29,8 +29,8 @@
     {
       "id": "entry-api-003",
       "streamId": "api-automation-refactor",
-      "type": "waiting",
-      "title": "Waiting for contract export",
+      "type": "note",
+      "title": "Parked for contract export",
       "content": "Platform team expects to publish the final service contract export before the next refactor pass.",
       "createdAt": "2026-05-12T16:00:00.000Z",
       "linkedFiles": []

@@ -31,4 +31,8 @@ export class NoteRepository {
   read(path: string) {
     return this.store.read(path);
   }
+
+  write(path: string, markdown: string) {
+    return this.store.write(path, markdown);
+  }
 }

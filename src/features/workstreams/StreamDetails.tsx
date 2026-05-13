@@ -1,12 +1,11 @@
 import { useEffect, useState } from "react";
 import { Check, FilePlus2, NotebookPen, Pencil, Plus, Save, Timer } from "lucide-react";
-import { Badge } from "../../components/ui/badge";
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
 import { Select } from "../../components/ui/select";
 import { Textarea } from "../../components/ui/textarea";
-import type { Workstream, WorkstreamPriority, WorkstreamStatus } from "../../core/models/workstream";
-import { workstreamPriorities, workstreamStatuses } from "../../core/models/workstream";
+import type { Workstream, WorkstreamStatus } from "../../core/models/workstream";
+import { workstreamStatuses } from "../../core/models/workstream";
 
 export function StreamDetails({
   stream,
@@ -20,6 +19,7 @@ export function StreamDetails({
   onWorkLog,
   onAddNote,
   onLinkFile,
+  onOpenFile,
 }: {
   stream: Workstream;
   edit: Workstream;
@@ -32,6 +32,7 @@ export function StreamDetails({
   onWorkLog: () => void;
   onAddNote: () => void;
   onLinkFile: () => void;
+  onOpenFile: (file: Workstream["linkedFiles"][number]) => void;
 }) {
   const [editing, setEditing] = useState(false);
 
@@ -45,12 +46,12 @@ export function StreamDetails({
   };
 
   return (
-    <aside className="panel h-screen w-full overflow-auto border-l lg:w-[384px]">
-      <div className="border-b border-white/[0.055] p-6">
+    <aside className="panel flex h-screen w-full shrink-0 flex-col overflow-hidden lg:w-[360px]">
+      <div className="shrink-0 px-5 pb-2 pt-5">
         <div className="flex items-center justify-between gap-4">
           <div>
-            <h2 className="text-sm font-medium">Context Snapshot</h2>
-            <p className="mt-1 text-xs text-muted-foreground">Read first, adjust when context changes.</p>
+            <h2 className="text-sm font-medium text-foreground/90">Context Snapshot</h2>
+            <p className="mt-1 text-xs text-muted-foreground/85">Read first, adjust when context changes.</p>
           </div>
           <Button size="sm" variant={editing ? "default" : "secondary"} onClick={editing ? saveAndClose : () => setEditing(true)}>
             {editing ? <Save className="h-4 w-4" /> : <Pencil className="h-4 w-4" />}
@@ -58,7 +59,7 @@ export function StreamDetails({
           </Button>
         </div>
       </div>
-      <div className="space-y-8 p-6">
+      <div className="min-h-0 flex-1 space-y-4 overflow-hidden px-5 pb-4">
         <section>
           {editing ? (
             <div className="space-y-4">
@@ -67,87 +68,72 @@ export function StreamDetails({
             </div>
           ) : (
             <>
-              <h3 className="text-lg font-medium leading-7">{stream.title}</h3>
-              <p className="mt-4 text-sm leading-7 text-muted-foreground">{stream.description}</p>
+              <h3 className="text-base font-medium leading-7">{stream.title}</h3>
+              <p className="mt-2 line-clamp-2 text-[15px] leading-7 text-foreground/72">{stream.description}</p>
             </>
           )}
-          <div className="mt-4 grid grid-cols-2 gap-4">
-            <Select disabled={!editing} value={edit.status} onChange={(event) => setEdit({ ...edit, status: event.target.value as WorkstreamStatus })}>
-              {workstreamStatuses.map((status) => (
-                <option key={status}>{status}</option>
-              ))}
-            </Select>
-            <Select disabled={!editing} value={edit.priority} onChange={(event) => setEdit({ ...edit, priority: event.target.value as WorkstreamPriority })}>
-              {workstreamPriorities.map((priority) => (
-                <option key={priority}>{priority}</option>
-              ))}
-            </Select>
-          </div>
-        </section>
-
-        <section>
-          <label className="section-label mb-4 block">Tags</label>
           {editing ? (
-            <Input value={edit.tags.join(", ")} onChange={(event) => setEdit({ ...edit, tags: event.target.value.split(",").map((tag) => tag.trim()).filter(Boolean) })} placeholder="api, testing, review" />
-          ) : null}
-          <div className="mt-2 flex flex-wrap gap-2">
-            {stream.tags.map((tag) => (
-              <Badge key={tag} className="normal-case tracking-normal">
-                {tag}
-              </Badge>
-            ))}
-          </div>
+            <div className="mt-4 max-w-[12rem]">
+              <Select value={edit.status} onChange={(event) => setEdit({ ...edit, status: event.target.value as WorkstreamStatus })}>
+                {workstreamStatuses.map((status) => (
+                  <option key={status}>{status}</option>
+                ))}
+              </Select>
+            </div>
+          ) : (
+            <p className="mt-3 text-xs uppercase tracking-[0.14em] text-muted-foreground/75">{stream.status}</p>
+          )}
         </section>
 
         <section>
-          <label className="section-label mb-4 block">Current Context</label>
+          <label className="mb-2 block text-[10px] font-medium uppercase tracking-[0.16em] text-muted-foreground/70">Current Context</label>
           {editing ? (
             <Textarea value={edit.currentContext} onChange={(event) => setEdit({ ...edit, currentContext: event.target.value })} />
           ) : (
-            <div className="rounded-lg border border-white/[0.055] border-l-2 border-l-primary/45 bg-white/[0.03] p-4 text-[15px] leading-7 text-muted-foreground shadow-[0_16px_48px_rgba(0,0,0,0.15)]">
+            <div className="line-clamp-6 max-w-[32rem] border-l border-l-primary/16 pl-4 pr-2 text-[15px] leading-7 text-foreground/82">
               {stream.currentContext || "No current context captured yet."}
             </div>
           )}
         </section>
 
         <section>
-          <div className="mb-4 flex items-center justify-between">
-            <label className="section-label">Next Actions</label>
+          <div className="mb-2 flex items-center justify-between">
+            <label className="text-[10px] font-medium uppercase tracking-[0.16em] text-muted-foreground/70">Next Things / Resume Notes</label>
             <Pencil className="h-3.5 w-3.5 text-muted-foreground" />
           </div>
-          <div className="space-y-2">
+          <div className="space-y-1">
             {stream.nextActions.map((action) => (
-              <div key={action} className="flex items-start gap-4 rounded-lg border border-white/[0.045] bg-white/[0.025] p-4">
+              <div key={action} className="flex items-start gap-3 rounded-lg px-1 py-1 transition duration-200 ease-out hover:bg-white/[0.024]">
                 <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-primary/65" />
-                <span className="flex-1 text-sm leading-6">{action}</span>
-                <Button size="icon" variant="ghost" onClick={() => onDoneAction(action)} aria-label="Mark next action done">
+                <span className="flex-1 text-sm leading-6 text-foreground/86">{action}</span>
+                <Button size="icon" variant="ghost" onClick={() => onDoneAction(action)} aria-label="Clear resume note">
                   <Check className="h-4 w-4" />
                 </Button>
               </div>
             ))}
           </div>
-          <div className="mt-4 flex gap-2">
-            <Input value={newAction} onChange={(event) => setNewAction(event.target.value)} placeholder="Small thing to continue" />
-            <Button size="icon" variant="secondary" onClick={onAddAction} aria-label="Add next action">
+          <div className="mt-2 flex gap-2">
+            <Input value={newAction} onChange={(event) => setNewAction(event.target.value)} placeholder="Small thing to resume" />
+            <Button size="icon" variant="secondary" onClick={onAddAction} aria-label="Add resume note">
               <Plus className="h-4 w-4" />
             </Button>
           </div>
         </section>
 
         <section>
-          <label className="section-label mb-4 block">Linked Files</label>
-          <div className="space-y-2">
+          <label className="mb-2 block text-[10px] font-medium uppercase tracking-[0.16em] text-muted-foreground/70">Linked Files</label>
+          <div className="space-y-1">
             {stream.linkedFiles.map((file) => (
-              <div key={file.path} className="rounded-lg border border-white/[0.045] bg-white/[0.025] p-4">
-                <div className="text-sm">{file.label}</div>
-                <div className="mt-2 break-all text-xs leading-5 text-muted-foreground">{file.path}</div>
-              </div>
+              <button key={file.path} type="button" onClick={() => onOpenFile(file)} className="block w-full rounded-lg px-1 py-1 text-left transition duration-200 ease-out hover:bg-white/[0.024]">
+                <div className="text-sm text-foreground/88">{file.label}</div>
+                <div className="mt-0.5 line-clamp-1 break-all text-xs leading-5 text-muted-foreground">{file.path}</div>
+              </button>
             ))}
             {!stream.linkedFiles.length ? <p className="text-sm text-muted-foreground">No linked files yet.</p> : null}
           </div>
         </section>
 
-        <section className="grid gap-2 border-t border-white/[0.055] pt-6">
+        <section className="grid gap-2 pt-2">
           <Button onClick={onWorkLog}>
             <Timer className="h-4 w-4" />
             Worked on this today

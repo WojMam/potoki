@@ -3,8 +3,6 @@
   "title": "R&D: Local AI integration",
   "description": "Explore patterns for adding local-only AI assistance inside a restricted engineering workstation.",
   "status": "active",
-  "priority": "high",
-  "tags": ["ai", "offline", "security", "research"],
   "currentContext": "The useful path seems to be a local model runner behind a small command wrapper. No cloud calls, telemetry, credential storage, or background service are acceptable. The next discussion should focus on model packaging and approved artifact distribution.",
   "nextActions": [
     "Compare approved local model packaging options",
@@ -23,8 +21,14 @@
       "path": "artifacts/local-ai-integration/local-ai-architecture.drawio",
       "type": "drawio",
       "addedAt": "2026-05-12T15:10:00.000Z"
+    },
+    {
+      "label": "Testowa",
+      "path": "notes/local-ai-integration/2026-05-13-testowa.md",
+      "type": "markdown",
+      "addedAt": "2026-05-13T14:40:55.980Z"
     }
   ],
   "createdAt": "2026-05-10T08:15:00.000Z",
-  "updatedAt": "2026-05-13T09:45:00.000Z"
+  "updatedAt": "2026-05-13T14:41:36.202Z"
 }

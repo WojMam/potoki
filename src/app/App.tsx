@@ -4,7 +4,7 @@ import { Button } from "../components/ui/button";
 import { FileSystemAccessAdapter, type DirectoryHandle } from "../core/filesystem/FileSystemAccessAdapter";
 import type { LinkedFile } from "../core/models/fileLink";
 import type { TimelineEntry, TimelineEntryType } from "../core/models/timeline";
-import type { Workstream, WorkstreamPriority, WorkstreamStatus } from "../core/models/workstream";
+import type { Workstream, WorkstreamStatus } from "../core/models/workstream";
 import type { WorkspaceManifest } from "../core/models/workspace";
 import { NoteRepository } from "../core/repositories/NoteRepository";
 import { StreamRepository } from "../core/repositories/StreamRepository";
@@ -13,6 +13,7 @@ import { WorkspaceRepository, type LoadIssue } from "../core/repositories/Worksp
 import { nowIso } from "../core/utils/date";
 import { createId, slugify } from "../core/utils/ids";
 import { Dashboard } from "../features/dashboard/Dashboard";
+import { FilePreviewDialog, type FilePreviewState } from "../features/notes/FilePreviewDialog";
 import { NoteDialog } from "../features/notes/NoteDialog";
 import { streamMatchesSearch } from "../features/search/search";
 import { TimelinePanel } from "../features/timeline/TimelinePanel";
@@ -29,6 +30,8 @@ type Repositories = {
   notes: NoteRepository;
 };
 
+type NoteDialogMode = { kind: "stream" } | { kind: "entry"; entry: TimelineEntry };
+
 const adapter = new FileSystemAccessAdapter();
 
 export function App() {
@@ -42,6 +45,7 @@ export function App() {
   const [busy, setBusy] = useState(false);
   const [workspaceName, setWorkspaceName] = useState("Threadbase Workspace");
   const [selectedId, setSelectedId] = useState<string | undefined>();
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState<"all" | WorkstreamStatus>("all");
   const [entryDraft, setEntryDraft] = useState<{ type: TimelineEntryType; title: string; content: string }>({
@@ -52,17 +56,18 @@ export function App() {
   const [editStream, setEditStream] = useState<Workstream | null>(null);
   const [newAction, setNewAction] = useState("");
   const [noteDialog, setNoteDialog] = useState(false);
+  const [noteMode, setNoteMode] = useState<NoteDialogMode>({ kind: "stream" });
   const [noteTitle, setNoteTitle] = useState("");
   const [noteMarkdown, setNoteMarkdown] = useState("");
-  const [notePreview, setNotePreview] = useState<string | undefined>();
-  const [selectedNotePath, setSelectedNotePath] = useState<string | undefined>();
+  const [noteTimelineDescription, setNoteTimelineDescription] = useState("");
+  const [noteIncludeTimelineEntry, setNoteIncludeTimelineEntry] = useState(false);
+  const [filePreview, setFilePreview] = useState<FilePreviewState | null>(null);
   const [workLogOpen, setWorkLogOpen] = useState(false);
   const [workLogNote, setWorkLogNote] = useState("");
   const [workLogHours, setWorkLogHours] = useState("");
   const [newStreamOpen, setNewStreamOpen] = useState(false);
   const [newStreamTitle, setNewStreamTitle] = useState("");
   const [newStreamDescription, setNewStreamDescription] = useState("");
-  const [newStreamPriority, setNewStreamPriority] = useState<WorkstreamPriority>("medium");
 
   const selectedStream = streams.find((stream) => stream.id === selectedId);
   const selectedEntries = entries.filter((entry) => entry.streamId === selectedId);
@@ -79,8 +84,7 @@ export function App() {
   useEffect(() => {
     setEditStream(selectedStream ? structuredClone(selectedStream) : null);
     setEntryDraft({ type: "note", title: "", content: "" });
-    setSelectedNotePath(undefined);
-    setNotePreview(undefined);
+    setFilePreview(null);
     setNewAction("");
   }, [selectedStream?.id]);
 
@@ -174,6 +178,18 @@ export function App() {
     }
   }
 
+  async function updateTimelineEntry(entry: TimelineEntry) {
+    if (!repos || !manifest) return;
+    try {
+      const nextEntries = await repos.timeline.update(entry.streamId, entry);
+      setEntries((current) => [...current.filter((item) => item.streamId !== entry.streamId), ...nextEntries]);
+      setManifest(await repos.workspace.touch(manifest));
+      setError("");
+    } catch (err) {
+      setError(toFriendlyError(err, "Could not update the timeline JSON file."));
+    }
+  }
+
   async function addTimelineEntry() {
     if (!selectedStream || !entryDraft.title.trim()) return;
     await createTimelineEntry({
@@ -199,7 +215,7 @@ export function App() {
     await createTimelineEntry({
       streamId: selectedStream.id,
       type: "action_done",
-      title: "Next action completed",
+      title: "Resume note cleared",
       content: action,
       linkedFiles: [],
     });
@@ -210,30 +226,66 @@ export function App() {
     try {
       const path = await repos.notes.create(selectedStream.id, noteTitle.trim(), noteMarkdown || `# ${noteTitle.trim()}`);
       const linkedFile = linkedFileFromPath(path, noteTitle.trim(), "markdown");
-      await saveStream({ ...selectedStream, linkedFiles: [...selectedStream.linkedFiles, linkedFile] });
-      await createTimelineEntry({
-        streamId: selectedStream.id,
-        type: "note",
-        title: noteTitle.trim(),
-        content: "Markdown note created.",
-        linkedFiles: [linkedFile],
-      });
+      if (noteMode.kind === "entry") {
+        await updateTimelineEntry({
+          ...noteMode.entry,
+          linkedFiles: [...noteMode.entry.linkedFiles, linkedFile],
+        });
+      } else {
+        await saveStream({ ...selectedStream, linkedFiles: [...selectedStream.linkedFiles, linkedFile] });
+        if (noteIncludeTimelineEntry) {
+          await createTimelineEntry({
+            streamId: selectedStream.id,
+            type: "note",
+            title: noteTitle.trim(),
+            content: noteTimelineDescription.trim() || `Added note: ${noteTitle.trim()}`,
+            linkedFiles: [linkedFile],
+          });
+        }
+      }
       setNoteDialog(false);
       setNoteTitle("");
       setNoteMarkdown("");
-      await previewNote(path);
+      setNoteTimelineDescription("");
+      setNoteIncludeTimelineEntry(false);
+      await previewFile(linkedFile);
     } catch (err) {
       setError(toFriendlyError(err, "Could not create the Markdown note."));
     }
   }
 
-  async function previewNote(path: string) {
+  async function saveExistingNote(path: string, markdown: string) {
     if (!repos) return;
     try {
-      setSelectedNotePath(path);
-      setNotePreview(await repos.notes.read(path));
+      await repos.notes.write(path, markdown);
+      setFilePreview((current) => (current && current.path === path ? { ...current, content: markdown } : current));
+      setError("");
     } catch (err) {
-      setError(toFriendlyError(err, `Could not read ${path}`));
+      setError(toFriendlyError(err, `Could not save ${path}`));
+    }
+  }
+
+  async function previewFile(file: LinkedFile) {
+    if (!repos) return;
+    const isMarkdown = file.type === "markdown" || file.path.toLowerCase().endsWith(".md");
+    setFilePreview({
+      path: file.path,
+      label: file.label,
+      type: file.type,
+      content: null,
+      isMarkdown,
+    });
+    try {
+      setFilePreview({
+        path: file.path,
+        label: file.label,
+        type: file.type,
+        content: await repos.notes.read(file.path),
+        isMarkdown,
+      });
+    } catch (err) {
+      setFilePreview(null);
+      setError(toFriendlyError(err, `Could not read ${file.path}`));
     }
   }
 
@@ -287,8 +339,6 @@ export function App() {
         title: newStreamTitle.trim(),
         description: newStreamDescription.trim(),
         status: "active",
-        priority: newStreamPriority,
-        tags: [],
         currentContext: newStreamDescription.trim(),
         nextActions: [],
         linkedFiles: [],
@@ -305,11 +355,28 @@ export function App() {
       setNewStreamOpen(false);
       setNewStreamTitle("");
       setNewStreamDescription("");
-      setNewStreamPriority("medium");
       setError("");
     } catch (err) {
       setError(toFriendlyError(err, "Could not create the stream files."));
     }
+  }
+
+  function openStreamNoteDialog() {
+    setNoteMode({ kind: "stream" });
+    setNoteTitle("");
+    setNoteMarkdown("");
+    setNoteTimelineDescription("");
+    setNoteIncludeTimelineEntry(false);
+    setNoteDialog(true);
+  }
+
+  function openEntryNoteDialog(entry: TimelineEntry) {
+    setNoteMode({ kind: "entry", entry });
+    setNoteTitle("");
+    setNoteMarkdown("");
+    setNoteTimelineDescription("");
+    setNoteIncludeTimelineEntry(false);
+    setNoteDialog(true);
   }
 
   if (!manifest) {
@@ -326,30 +393,33 @@ export function App() {
   }
 
   return (
-    <div className="min-h-screen bg-background text-foreground lg:flex">
+    <div className="workspace-bg h-screen overflow-hidden text-foreground lg:flex">
       <StreamList
         workspaceName={manifest.name}
         streams={filteredStreams}
         selectedId={selectedId}
+        collapsed={sidebarCollapsed}
         query={query}
         filter={filter}
         onQueryChange={setQuery}
         onFilterChange={setFilter}
         onSelect={setSelectedId}
+        onToggleCollapsed={() => setSidebarCollapsed((value) => !value)}
         onNew={() => setNewStreamOpen(true)}
       />
-      <div className="min-w-0 flex-1 lg:flex">
+      <div className="min-h-0 min-w-0 flex-1 transition-[width] duration-[240ms] ease-in-out lg:flex">
         {selectedStream ? (
           <>
             <TimelinePanel
               stream={selectedStream}
               entries={selectedEntries}
-              notePreview={notePreview}
-              selectedNotePath={selectedNotePath}
               draft={entryDraft}
               setDraft={setEntryDraft}
               onAddEntry={addTimelineEntry}
-              onPreviewNote={previewNote}
+              onPreviewFile={previewFile}
+              onAttachNote={openEntryNoteDialog}
+              onUpdateEntry={updateTimelineEntry}
+              onBackToDashboard={() => setSelectedId(undefined)}
             />
             {editStream ? (
               <StreamDetails
@@ -362,17 +432,14 @@ export function App() {
                 onAddAction={addNextAction}
                 onDoneAction={markActionDone}
                 onWorkLog={() => setWorkLogOpen(true)}
-                onAddNote={() => {
-                  setNoteTitle("");
-                  setNoteMarkdown("");
-                  setNoteDialog(true);
-                }}
+                onAddNote={openStreamNoteDialog}
                 onLinkFile={linkFile}
+                onOpenFile={previewFile}
               />
             ) : null}
           </>
         ) : (
-          <Dashboard streams={streams} entries={entries} onSelect={setSelectedId} />
+          <Dashboard streams={streams} onSelect={setSelectedId} />
         )}
       </div>
 
@@ -387,10 +454,15 @@ export function App() {
 
       <NoteDialog
         open={noteDialog}
+        mode={noteMode.kind}
         title={noteTitle}
         markdown={noteMarkdown}
+        timelineDescription={noteTimelineDescription}
+        includeTimelineEntry={noteIncludeTimelineEntry}
         setTitle={setNoteTitle}
         setMarkdown={setNoteMarkdown}
+        setTimelineDescription={setNoteTimelineDescription}
+        setIncludeTimelineEntry={setNoteIncludeTimelineEntry}
         onClose={() => setNoteDialog(false)}
         onSave={saveNote}
       />
@@ -407,13 +479,12 @@ export function App() {
         open={newStreamOpen}
         title={newStreamTitle}
         description={newStreamDescription}
-        priority={newStreamPriority}
         setTitle={setNewStreamTitle}
         setDescription={setNewStreamDescription}
-        setPriority={setNewStreamPriority}
         onClose={() => setNewStreamOpen(false)}
         onCreate={createStream}
       />
+      <FilePreviewDialog preview={filePreview} onClose={() => setFilePreview(null)} onSave={saveExistingNote} />
       {!streams.length ? (
         <div className="fixed inset-x-0 bottom-8 flex justify-center">
           <EmptyState title="No streams yet" body="Create a stream to start building local memory." action={<Button onClick={() => setNewStreamOpen(true)}>New Stream</Button>} />

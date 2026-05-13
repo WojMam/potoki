@@ -2,9 +2,7 @@
   "id": "security-analysis",
   "title": "Security analysis: export workflow",
   "description": "Capture security review notes for a local export workflow used by operations analysts.",
-  "status": "done",
-  "priority": "high",
-  "tags": ["security", "review", "operations"],
+  "status": "archived",
   "currentContext": "Review completed. The accepted decision is to keep export manifests local, redact secrets before writing files, and avoid retaining raw request payloads.",
   "nextActions": [],
   "linkedFiles": [

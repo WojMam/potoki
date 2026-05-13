@@ -2,10 +2,8 @@
   "id": "architecture-diagram-review",
   "title": "Architecture diagram review",
   "description": "Review local architecture diagrams and connect open questions to decisions.",
-  "status": "paused",
-  "priority": "low",
-  "tags": ["architecture", "documentation", "drawio"],
-  "currentContext": "Diagram is mostly current, but batch ingestion and downstream archive retention need one more pass. Paused until deployment notes are confirmed.",
+  "status": "parked",
+  "currentContext": "Diagram is mostly current, but batch ingestion and downstream archive retention need one more pass. Parked until deployment notes are confirmed.",
   "nextActions": [
     "Add batch ingestion boundary",
     "Check archive retention wording",

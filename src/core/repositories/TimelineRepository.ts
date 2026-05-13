@@ -53,4 +53,11 @@ export class TimelineRepository {
     await this.save(streamId, next);
     return next;
   }
+
+  async update(streamId: string, entry: TimelineEntry) {
+    const { entries } = await this.load(streamId);
+    const next = entries.map((item) => (item.id === entry.id ? entry : item));
+    await this.save(streamId, next);
+    return next;
+  }
 }

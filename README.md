@@ -1,6 +1,6 @@
 # Threadbase
 
-Threadbase is a local-first, offline, file-based context workspace for technical workstreams. It helps you keep track of parallel streams of work, decisions, operational notes, linked local artifacts, and small next actions without a backend, database, account, telemetry, or network access.
+Threadbase is a local-first, offline, file-based context workspace for technical workstreams. It helps you keep track of parallel streams of work, decisions, operational notes, linked local artifacts, and small resume notes without a backend, database, account, telemetry, or network access.
 
 The filesystem is the source of truth:
 

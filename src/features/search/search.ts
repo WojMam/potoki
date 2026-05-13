@@ -8,7 +8,6 @@ export function streamMatchesSearch(stream: Workstream, entries: TimelineEntry[]
     stream.title,
     stream.description,
     stream.currentContext,
-    ...stream.tags,
     ...stream.nextActions,
     ...stream.linkedFiles.map((file) => `${file.label} ${file.path}`),
     ...entries

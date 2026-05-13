@@ -25,8 +25,6 @@
   "title": "API automation refactor",
   "description": "Tighten API test utilities.",
   "status": "active",
-  "priority": "medium",
-  "tags": ["api", "tests"],
   "currentContext": "Latest context summary.",
   "nextActions": ["Compare old and new fixtures"],
   "linkedFiles": [
@@ -42,9 +40,7 @@
 }
 ```
 
-Allowed statuses: `active`, `paused`, `waiting`, `done`, `archived`.
-
-Allowed priorities: `low`, `medium`, `high`.
+Allowed statuses: `active`, `parked`, `archived`.
 
 ## timeline/{streamId}.timeline.json
 
@@ -66,6 +62,8 @@ Allowed priorities: `low`, `medium`, `high`.
 ```
 
 Allowed timeline types: `note`, `decision`, `action_done`, `waiting`, `work_log`, `file_link`.
+
+The `waiting` timeline type is retained for file compatibility and is displayed in the UI as a parked note.
 
 ## notes/{streamId}/*.md
 

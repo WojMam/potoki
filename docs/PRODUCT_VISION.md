@@ -5,8 +5,8 @@ Threadbase is a calm local context memory tool for technical users in restricted
 - what the stream is about,
 - what happened recently,
 - which decisions were made,
-- what is waiting,
-- which small next actions can be continued,
+- what is parked,
+- which small resume notes can be continued,
 - which notes and local artifacts belong to the stream.
 
 It is deliberately not a task manager, Kanban board, time tracker, analytics dashboard, or project management suite. The product shape is closer to a developer cockpit plus operational notebook.

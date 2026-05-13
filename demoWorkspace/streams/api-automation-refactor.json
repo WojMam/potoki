@@ -2,10 +2,8 @@
   "id": "api-automation-refactor",
   "title": "API automation refactor",
   "description": "Reduce brittle setup in API tests and align fixtures with the latest service contracts.",
-  "status": "waiting",
-  "priority": "medium",
-  "tags": ["api", "testing", "refactor", "fixtures"],
-  "currentContext": "Fixture helpers are duplicated across three suites. Refactor can continue after the platform team publishes the final contract export. Current notes capture the intended helper boundaries.",
+  "status": "parked",
+  "currentContext": "Fixture helpers are duplicated across three suites. This stream is parked until the platform team publishes the final contract export. Current notes capture the intended helper boundaries.",
   "nextActions": [
     "Diff contract export against current fixtures",
     "List helper functions that can be collapsed",
