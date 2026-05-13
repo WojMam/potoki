@@ -4,8 +4,8 @@
     {
       "streamId": "local-ai-integration",
       "type": "work_log",
-      "title": "Testowy Work log",
-      "content": "A to jest mój testowy worklog",
+      "title": "Testowy wpis pracy",
+      "content": "Krótki test zapisu pracy w potoku.",
       "linkedFiles": [],
       "id": "entry-mp463yvl-ob3ru86",
       "createdAt": "2026-05-13T14:41:36.081Z"
@@ -13,11 +13,11 @@
     {
       "streamId": "local-ai-integration",
       "type": "note",
-      "title": "Testowa",
-      "content": "Stworzona i wyedtyowana",
+      "title": "Notatka testowa",
+      "content": "Utworzona i później poprawiona.",
       "linkedFiles": [
         {
-          "label": "Testowa",
+          "label": "Notatka testowa",
           "path": "notes/local-ai-integration/2026-05-13-testowa.md",
           "type": "markdown",
           "addedAt": "2026-05-13T14:40:55.980Z"
@@ -30,12 +30,12 @@
       "id": "entry-local-ai-004",
       "streamId": "local-ai-integration",
       "type": "work_log",
-      "title": "Worked on this today",
-      "content": "Reviewed local packaging constraints and narrowed options to command wrapper plus explicit file handoff.\nDuration: 1.5 hour(s)",
+      "title": "Nad czym dziś pracowałem",
+      "content": "Przejrzałem ograniczenia pakowania lokalnego i zawęziłem kierunek do wrappera komend oraz jawnego przekazywania plików.\nCzas: 1.5 godz.",
       "createdAt": "2026-05-13T09:45:00.000Z",
       "linkedFiles": [
         {
-          "label": "Research notes",
+          "label": "Notatki badawcze",
           "path": "notes/local-ai-integration/2026-05-12-local-ai-research.md",
           "type": "markdown",
           "addedAt": "2026-05-12T14:20:00.000Z"
@@ -46,12 +46,12 @@
       "id": "entry-local-ai-003",
       "streamId": "local-ai-integration",
       "type": "file_link",
-      "title": "Linked architecture sketch",
-      "content": "Architecture sketch added for the local command-wrapper option.",
+      "title": "Dołączony szkic architektury",
+      "content": "Szkic architektury dodany dla wariantu z lokalnym wrapperem komend.",
       "createdAt": "2026-05-12T15:10:00.000Z",
       "linkedFiles": [
         {
-          "label": "Architecture sketch",
+          "label": "Szkic architektury",
           "path": "artifacts/local-ai-integration/local-ai-architecture.drawio",
           "type": "drawio",
           "addedAt": "2026-05-12T15:10:00.000Z"
@@ -62,8 +62,8 @@
       "id": "entry-local-ai-002",
       "streamId": "local-ai-integration",
       "type": "decision",
-      "title": "Keep model interaction explicit",
-      "content": "Any AI workflow should be triggered by a visible user action. No passive folder watching or background processing.",
+      "title": "Interakcja z modelem ma być jawna",
+      "content": "Każdy przepływ AI powinien zaczynać się od widocznej akcji użytkownika. Bez pasywnego obserwowania folderów i bez pracy w tle.",
       "createdAt": "2026-05-11T13:15:00.000Z",
       "linkedFiles": []
     },
@@ -71,8 +71,8 @@
       "id": "entry-local-ai-001",
       "streamId": "local-ai-integration",
       "type": "note",
-      "title": "Initial constraints captured",
-      "content": "Environment allows static local apps and human-readable files. Network calls, auth, telemetry, background daemons, and local databases are out of scope.",
+      "title": "Zapisane ograniczenia początkowe",
+      "content": "Środowisko dopuszcza statyczne aplikacje lokalne i czytelne pliki. Poza zakresem są połączenia sieciowe, autoryzacja, telemetria, procesy w tle i lokalne bazy danych.",
       "createdAt": "2026-05-10T08:30:00.000Z",
       "linkedFiles": []
     }

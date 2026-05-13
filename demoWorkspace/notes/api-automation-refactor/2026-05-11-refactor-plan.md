@@ -1,21 +1,21 @@
-# API Automation Refactor Plan
+# Plan refaktoryzacji automatyzacji API
 
-## Goal
+## Cel
 
-Reduce repeated test setup while keeping test behavior easy to inspect.
+Zmniejszyć powtarzalne przygotowanie testów bez ukrywania ich zachowania.
 
-## Keep
+## Zostaje
 
-- Existing suite structure.
-- Explicit scenario names.
-- Per-suite ownership.
+- Obecny układ zestawów testów.
+- Jawne nazwy scenariuszy.
+- Własność po stronie konkretnych zestawów.
 
-## Change
+## Zmiany
 
-- Extract fixture factories for shared payload defaults.
-- Move repeated response assertions into small helpers.
-- Keep retry policy visible near the calling test.
+- Wyciągnąć fabryki fixture dla wspólnych domyślnych payloadów.
+- Przenieść powtarzane asercje odpowiedzi do małych helperów.
+- Zostawić politykę ponowień blisko testu, który jej używa.
 
-## Avoid
+## Nie robić
 
-Do not create a broad internal testing framework. The team needs less indirection, not more.
+Nie budować szerokiego frameworka testowego. Zespół potrzebuje mniej pośrednich warstw, nie więcej.

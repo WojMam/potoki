@@ -1,17 +1,17 @@
-# Security Review Summary
+# Podsumowanie przeglądu bezpieczeństwa
 
-## Decision
+## Decyzja
 
-Export data may be written to local files only after secrets are redacted.
+Dane eksportu mogą być zapisane do plików lokalnych dopiero po redakcji sekretów.
 
-## Accepted Controls
+## Przyjęte zabezpieczenia
 
-- Explicit user-triggered export.
-- Human-readable manifest.
-- No hidden storage.
-- No raw request payload retention.
-- Local folder selected by the user.
+- Eksport uruchamiany jawnie przez użytkownika.
+- Czytelny manifest.
+- Brak ukrytego storage.
+- Brak utrwalania surowych payloadów żądań.
+- Lokalny folder wybrany przez użytkownika.
 
-## Result
+## Wynik
 
-Review complete. No open follow-up items.
+Przegląd zakończony. Brak otwartych notatek powrotu.

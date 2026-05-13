@@ -52,7 +52,7 @@ export class WorkspaceRepository {
   async initialize(name: string, withSampleData: boolean) {
     const timestamp = nowIso();
     const manifest: WorkspaceManifest = {
-      name: name.trim() || "Threadbase Workspace",
+      name: name.trim() || "POTOKI",
       version: "1.0.0",
       createdAt: timestamp,
       updatedAt: timestamp,
@@ -84,28 +84,28 @@ export class WorkspaceRepository {
     const streams = [
       {
         id: "local-ai-integration",
-        title: "R&D: Local AI integration",
-        description: "Research offline-safe patterns for local model experimentation and restricted environments.",
+        title: "R&D: lokalna integracja AI",
+        description: "Sprawdzenie lokalnych wzorców pracy z modelem w ograniczonym środowisku.",
         status: "active",
         currentContext:
-          "Comparing feasible local-only integration shapes. Cloud calls and telemetry are out of scope.",
-        nextActions: ["Review approved model runtime constraints", "Draft integration risk notes"],
+          "Porównujemy możliwe kształty integracji działającej wyłącznie lokalnie. Wywołania do chmury i telemetria są poza zakresem.",
+        nextActions: ["Sprawdź zatwierdzone ograniczenia runtime modelu", "Zapisz notatkę o ryzykach integracji"],
       },
       {
         id: "api-automation-refactor",
-        title: "API automation refactor",
-        description: "Tighten API test utilities and reduce brittle setup across automation suites.",
+        title: "Refaktoryzacja automatyzacji API",
+        description: "Uproszczenie narzędzi testów API i ograniczenie kruchego przygotowania zestawów.",
         status: "parked",
-        currentContext: "Parked until the latest service contract export is available for fixture updates.",
-        nextActions: ["Compare old and new contract fixtures", "List helper methods with duplicate behavior"],
+        currentContext: "Uśpione do czasu pojawienia się aktualnego eksportu kontraktu usługi do odświeżenia fixture.",
+        nextActions: ["Porównaj stare i nowe fixture kontraktu", "Wypisz helpery z powtarzającym się zachowaniem"],
       },
       {
         id: "architecture-diagram-review",
-        title: "Architecture diagram review",
-        description: "Keep local diagrams and review notes connected to architecture decisions.",
+        title: "Przegląd diagramu architektury",
+        description: "Połączenie lokalnych diagramów i notatek przeglądowych z decyzjami architektonicznymi.",
         status: "parked",
-        currentContext: "Need to reconcile the Draw.io diagram with recent deployment notes.",
-        nextActions: ["Open current diagram artifact", "Add missing batch-processing boundary"],
+        currentContext: "Trzeba uzgodnić diagram Draw.io z ostatnimi notatkami wdrożeniowymi.",
+        nextActions: ["Otwórz aktualny diagram", "Dodaj brakującą granicę przetwarzania batch"],
       },
     ] as const;
 
@@ -125,8 +125,8 @@ export class WorkspaceRepository {
               id: `${stream.id}-entry-1`,
               streamId: stream.id,
               type: "note",
-              title: "Workspace seeded",
-              content: `Initial context created for ${stream.title}.`,
+              title: "Utworzono kontekst",
+              content: `Dodano przykładowy kontekst dla: ${stream.title}.`,
               createdAt: timestamp,
               linkedFiles: [],
             },

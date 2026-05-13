@@ -1,6 +1,6 @@
 # Product Vision
 
-Threadbase is a calm local context memory tool for technical users in restricted environments. It is meant for returning to work after hours or days and quickly remembering:
+POTOKI is a calm local context memory tool for technical users in restricted environments. It is meant for returning to work after hours or days and quickly remembering:
 
 - what the stream is about,
 - what happened recently,

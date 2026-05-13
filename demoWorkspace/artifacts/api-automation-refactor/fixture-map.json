@@ -1,5 +1,5 @@
 {
-  "suites": ["accounts", "payments", "notifications"],
-  "duplicatedHelpers": ["auth setup", "payload defaults", "response assertions"],
-  "targetHelpers": ["fixture factories", "small assertion helpers"]
+  "suites": ["konta", "płatności", "powiadomienia"],
+  "duplicatedHelpers": ["przygotowanie autoryzacji", "domyślne payloady", "asercje odpowiedzi"],
+  "targetHelpers": ["fabryki fixture", "małe helpery asercji"]
 }

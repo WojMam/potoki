@@ -1,15 +1,15 @@
-# Architecture Diagram Review
+# Przegląd diagramu architektury
 
-## Findings
+## Ustalenia
 
-The synchronous request path is accurate. The diagram correctly shows the operator, internal service boundary, and downstream validation handoff.
+Synchroniczna ścieżka żądania jest aktualna. Diagram dobrze pokazuje operatora, granicę usługi wewnętrznej i przekazanie do walidacji.
 
-## Needs Update
+## Do poprawy
 
-- Batch ingestion boundary is missing.
-- Archive retention label is too vague.
-- Error replay path should be visually separated from the happy path.
+- Brakuje granicy batch ingestion.
+- Etykieta retencji archiwum jest zbyt ogólna.
+- Ścieżka ponowienia błędu powinna być oddzielona wizualnie od ścieżki podstawowej.
 
-## Next Pass
+## Następne przejście
 
-Wait for confirmed deployment notes, then update the Draw.io file in `artifacts/architecture-diagram-review/`.
+Poczekać na potwierdzone notatki wdrożeniowe, a potem zaktualizować plik Draw.io w `artifacts/architecture-diagram-review/`.

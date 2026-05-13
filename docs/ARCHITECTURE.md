@@ -1,6 +1,6 @@
 # Architecture
 
-Threadbase is a static React, TypeScript, Vite, Tailwind CSS and shadcn-style UI application.
+POTOKI is a static React, TypeScript, Vite, Tailwind CSS and shadcn-style UI application.
 
 Runtime constraints:
 

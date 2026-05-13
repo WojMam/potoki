@@ -1,20 +1,20 @@
-# Local AI Integration Research
+# Badanie lokalnej integracji AI
 
-## Constraints
+## Ograniczenia
 
-- No cloud calls.
-- No telemetry.
-- No account or authentication workflow.
-- No background service.
-- No database.
-- User must explicitly choose files or actions.
+- Bez wywołań do chmury.
+- Bez telemetrii.
+- Bez kont i osobnego logowania.
+- Bez procesu działającego w tle.
+- Bez bazy danych.
+- Użytkownik jawnie wybiera pliki albo akcje.
 
-## Candidate Shape
+## Proponowany kształt
 
-Use a small local command wrapper that accepts selected text or a temporary markdown handoff file. The app should keep the workflow visible and reversible.
+Mały lokalny wrapper komend, który przyjmuje zaznaczony tekst albo tymczasowy plik Markdown przekazany przez użytkownika. Przepływ powinien być widoczny i łatwy do cofnięcia.
 
-## Open Questions
+## Otwarte pytania
 
-- How are approved model binaries distributed?
-- Is generated content allowed to be written into project folders?
-- What retention note is needed for prompts and outputs?
+- Jak dystrybuować zatwierdzone binaria modeli?
+- Czy wynik modelu może być zapisywany w folderach projektowych?
+- Jak opisać retencję promptów i odpowiedzi?

@@ -1,23 +1,23 @@
 {
   "id": "api-automation-refactor",
-  "title": "API automation refactor",
-  "description": "Reduce brittle setup in API tests and align fixtures with the latest service contracts.",
+  "title": "Refaktoryzacja automatyzacji API",
+  "description": "Uproszczenie kruchego przygotowania testów API i dopasowanie fixture do aktualnych kontraktów usług.",
   "status": "parked",
-  "currentContext": "Fixture helpers are duplicated across three suites. This stream is parked until the platform team publishes the final contract export. Current notes capture the intended helper boundaries.",
+  "currentContext": "Helpery fixture powtarzają się w trzech zestawach testów. Potok jest uśpiony do czasu publikacji finalnego eksportu kontraktu przez zespół platformowy. Notatki opisują planowane granice helperów.",
   "nextActions": [
-    "Diff contract export against current fixtures",
-    "List helper functions that can be collapsed",
-    "Confirm retry policy with service owner"
+    "Porównaj eksport kontraktu z obecnymi fixture",
+    "Wypisz helpery, które można połączyć",
+    "Potwierdź politykę ponowień z właścicielem usługi"
   ],
   "linkedFiles": [
     {
-      "label": "Refactor plan",
+      "label": "Plan refaktoryzacji",
       "path": "notes/api-automation-refactor/2026-05-11-refactor-plan.md",
       "type": "markdown",
       "addedAt": "2026-05-11T10:05:00.000Z"
     },
     {
-      "label": "Fixture map",
+      "label": "Mapa fixture",
       "path": "artifacts/api-automation-refactor/fixture-map.json",
       "type": "json",
       "addedAt": "2026-05-11T11:30:00.000Z"

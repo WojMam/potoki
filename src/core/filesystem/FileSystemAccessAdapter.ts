@@ -7,7 +7,7 @@ export class FileSystemAccessAdapter {
 
   async openWorkspaceFolder() {
     if (!window.showDirectoryPicker) throw new Error("File System Access API is unavailable.");
-    return window.showDirectoryPicker({ id: "threadbase-workspace", mode: "readwrite" });
+    return window.showDirectoryPicker({ id: "potoki-workspace", mode: "readwrite" });
   }
 
   async chooseLocalFile() {

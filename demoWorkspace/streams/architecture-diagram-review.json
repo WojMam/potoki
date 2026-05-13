@@ -1,23 +1,23 @@
 {
   "id": "architecture-diagram-review",
-  "title": "Architecture diagram review",
-  "description": "Review local architecture diagrams and connect open questions to decisions.",
+  "title": "Przegląd diagramu architektury",
+  "description": "Przegląd lokalnych diagramów architektury i połączenie otwartych pytań z decyzjami.",
   "status": "parked",
-  "currentContext": "Diagram is mostly current, but batch ingestion and downstream archive retention need one more pass. Parked until deployment notes are confirmed.",
+  "currentContext": "Diagram jest w większości aktualny, ale granica batch ingestion i retencja archiwum wymagają jeszcze jednego przejścia. Potok jest uśpiony do czasu potwierdzenia notatek wdrożeniowych.",
   "nextActions": [
-    "Add batch ingestion boundary",
-    "Check archive retention wording",
-    "Link final review note to diagram"
+    "Dodaj granicę batch ingestion",
+    "Sprawdź opis retencji archiwum",
+    "Dołącz końcową notatkę przeglądu do diagramu"
   ],
   "linkedFiles": [
     {
-      "label": "Diagram review note",
+      "label": "Notatka z przeglądu diagramu",
       "path": "notes/architecture-diagram-review/2026-05-12-diagram-review.md",
       "type": "markdown",
       "addedAt": "2026-05-12T09:00:00.000Z"
     },
     {
-      "label": "Current diagram",
+      "label": "Aktualny diagram",
       "path": "artifacts/architecture-diagram-review/current-architecture.drawio",
       "type": "drawio",
       "addedAt": "2026-05-12T09:05:00.000Z"

@@ -5,23 +5,23 @@
 @layer base {
   :root {
     color-scheme: dark;
-    --background: 222 24% 7%;
+    --background: 218 30% 7.4%;
     --foreground: 210 22% 95%;
-    --card: 220 19% 13%;
+    --card: 218 18% 13.2%;
     --card-foreground: 210 20% 94%;
-    --muted: 220 16% 18%;
-    --muted-foreground: 214 15% 75%;
-    --accent: 189 48% 18%;
-    --accent-foreground: 190 35% 92%;
-    --primary: 173 60% 43%;
-    --primary-foreground: 180 30% 6%;
-    --secondary: 222 15% 18%;
+    --muted: 218 15% 18.5%;
+    --muted-foreground: 214 14% 74%;
+    --accent: 184 36% 19%;
+    --accent-foreground: 185 34% 94%;
+    --primary: 184 64% 50%;
+    --primary-foreground: 185 42% 97%;
+    --secondary: 218 15% 18%;
     --secondary-foreground: 210 20% 92%;
     --destructive: 358 62% 45%;
     --destructive-foreground: 0 0% 98%;
-    --border: 220 13% 18%;
-    --input: 220 13% 21%;
-    --ring: 173 60% 43%;
+    --border: 218 12% 18.5%;
+    --input: 218 13% 21%;
+    --ring: 184 64% 50%;
   }
 
   * {
@@ -49,84 +49,107 @@
 
 @layer components {
   .workspace-bg {
+    position: relative;
+    isolation: isolate;
     background:
-      radial-gradient(circle at 18% 0%, rgba(45, 212, 191, 0.06), transparent 30rem),
-      radial-gradient(circle at 92% 10%, rgba(99, 102, 241, 0.04), transparent 28rem),
-      linear-gradient(180deg, hsl(222 24% 8%), hsl(222 24% 6.8%));
+      radial-gradient(ellipse at 18% -8%, rgba(54, 181, 197, 0.062), transparent 34rem),
+      radial-gradient(ellipse at 88% 0%, rgba(70, 112, 142, 0.045), transparent 32rem),
+      radial-gradient(ellipse at 58% 112%, rgba(36, 104, 118, 0.035), transparent 40rem),
+      linear-gradient(180deg, hsl(218 30% 8.5%), hsl(218 31% 7.1%));
+    background-attachment: fixed;
+  }
+
+  .workspace-bg::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg width='720' height='420' viewBox='0 0 720 420' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3Cfilter id='s'%3E%3CfeGaussianBlur stdDeviation='0.45'/%3E%3C/filter%3E%3C/defs%3E%3Cg fill='none' stroke='%23a7cfc9' stroke-width='0.8' stroke-linecap='round' stroke-opacity='0.045' filter='url(%23s)'%3E%3Cpath d='M-40 74C80 36 160 112 280 74S520 36 760 74'/%3E%3Cpath d='M-40 186C92 150 170 218 298 186S526 150 760 186'/%3E%3Cpath d='M-40 308C76 274 174 336 292 308S532 274 760 308'/%3E%3C/g%3E%3C/svg%3E");
+    background-position: center top;
+    background-size: 880px 514px;
+    opacity: 0.18;
+    mix-blend-mode: screen;
+    mask-image: radial-gradient(ellipse at center, black 0%, black 42%, transparent 84%);
+  }
+
+  .workspace-bg > * {
+    position: relative;
+    z-index: 1;
   }
 
   .panel {
-    @apply border-transparent bg-[hsl(220_20%_13%/0.74)] shadow-[inset_-1px_0_0_rgba(255,255,255,0.022),0_24px_80px_rgba(0,0,0,0.10)] backdrop-blur-xl;
+    @apply border-transparent bg-[hsl(218_18%_13%/0.68)] shadow-[inset_-1px_0_0_rgba(255,255,255,0.014),0_24px_80px_rgba(0,0,0,0.08)] backdrop-blur-xl;
   }
 
   .surface-raised {
-    @apply bg-white/[0.045] shadow-[0_18px_56px_rgba(0,0,0,0.15)];
+    @apply bg-white/[0.04] shadow-[0_18px_56px_rgba(0,0,0,0.14)];
   }
 
   .surface-subtle {
-    @apply bg-white/[0.028];
+    @apply bg-white/[0.024];
   }
 
   .surface-ambient {
-    @apply bg-white/[0.034] shadow-[0_18px_56px_rgba(0,0,0,0.11)];
+    @apply bg-white/[0.03] shadow-[0_18px_56px_rgba(0,0,0,0.10)];
   }
 
   .surface-hover {
-    @apply transition duration-200 ease-out hover:bg-white/[0.062] hover:shadow-[0_22px_64px_rgba(0,0,0,0.18)];
+    @apply transition duration-300 ease-out hover:bg-white/[0.052] hover:shadow-[0_22px_64px_rgba(0,0,0,0.13)];
   }
 
   .section-label {
     @apply text-[11px] font-medium uppercase tracking-[0.16em] text-muted-foreground/90;
   }
 
-  .prose-threadbase {
+  .prose-potoki {
     @apply max-w-none text-base leading-8 text-foreground/90;
   }
 
-  .prose-threadbase h1,
-  .prose-threadbase h2,
-  .prose-threadbase h3 {
+  .prose-potoki h1,
+  .prose-potoki h2,
+  .prose-potoki h3 {
     @apply mb-4 mt-8 font-semibold tracking-tight text-foreground;
   }
 
-  .prose-threadbase h1 {
+  .prose-potoki h1 {
     @apply text-2xl leading-9;
   }
 
-  .prose-threadbase h2 {
+  .prose-potoki h2 {
     @apply text-xl leading-8;
   }
 
-  .prose-threadbase h3 {
+  .prose-potoki h3 {
     @apply text-base leading-7;
   }
 
-  .prose-threadbase p {
+  .prose-potoki p {
     @apply my-4 text-foreground/80;
   }
 
-  .prose-threadbase ul,
-  .prose-threadbase ol {
+  .prose-potoki ul,
+  .prose-potoki ol {
     @apply my-4 pl-6 text-foreground/80;
   }
 
-  .prose-threadbase li {
+  .prose-potoki li {
     @apply my-2 pl-1;
   }
 
-  .prose-threadbase code {
+  .prose-potoki code {
     @apply rounded-md border border-white/[0.055] bg-white/[0.055] px-1.5 py-0.5 text-[0.86em] text-foreground;
   }
 
-  .prose-threadbase pre {
+  .prose-potoki pre {
     @apply my-6 overflow-auto rounded-lg border border-white/[0.06] bg-black/20 p-4 shadow-inner;
   }
 
-  .prose-threadbase pre code {
+  .prose-potoki pre code {
     @apply border-0 bg-transparent p-0 text-[13px] leading-6;
   }
 
-  .prose-threadbase blockquote {
+  .prose-potoki blockquote {
     @apply my-6 border-l-2 border-primary/40 bg-white/[0.025] py-2 pl-4 text-foreground/75;
   }
 }

@@ -5,8 +5,8 @@
       "id": "entry-api-001",
       "streamId": "api-automation-refactor",
       "type": "note",
-      "title": "Duplicated helper areas",
-      "content": "Auth setup, payload defaults, and response assertions are copied across account, payment, and notification suites.",
+      "title": "Powtarzające się obszary helperów",
+      "content": "Przygotowanie auth, domyślne payloady i asercje odpowiedzi są kopiowane między zestawami account, payment i notification.",
       "createdAt": "2026-05-10T10:00:00.000Z",
       "linkedFiles": []
     },
@@ -14,12 +14,12 @@
       "id": "entry-api-002",
       "streamId": "api-automation-refactor",
       "type": "decision",
-      "title": "Do not build a shared framework",
-      "content": "Keep the refactor small: shared fixture factories and response assertions only. Avoid creating a test framework inside the test suite.",
+      "title": "Nie budować wspólnego frameworka",
+      "content": "Refaktoryzacja ma pozostać mała: wspólne fabryki fixture i asercje odpowiedzi. Bez tworzenia frameworka testowego wewnątrz testów.",
       "createdAt": "2026-05-11T09:45:00.000Z",
       "linkedFiles": [
         {
-          "label": "Refactor plan",
+          "label": "Plan refaktoryzacji",
           "path": "notes/api-automation-refactor/2026-05-11-refactor-plan.md",
           "type": "markdown",
           "addedAt": "2026-05-11T10:05:00.000Z"
@@ -30,8 +30,8 @@
       "id": "entry-api-003",
       "streamId": "api-automation-refactor",
       "type": "note",
-      "title": "Parked for contract export",
-      "content": "Platform team expects to publish the final service contract export before the next refactor pass.",
+      "title": "Uśpione do eksportu kontraktu",
+      "content": "Zespół platformowy ma opublikować finalny eksport kontraktu przed kolejnym przejściem refaktoryzacji.",
       "createdAt": "2026-05-12T16:00:00.000Z",
       "linkedFiles": []
     }

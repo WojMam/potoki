@@ -3,6 +3,7 @@ import { Button } from "../../components/ui/button";
 import { Dialog } from "../../components/ui/dialog";
 import { Input } from "../../components/ui/input";
 import { Textarea } from "../../components/ui/textarea";
+import { useI18n } from "../../core/i18n";
 
 export function NoteDialog({
   open,
@@ -31,24 +32,25 @@ export function NoteDialog({
   onClose: () => void;
   onSave: () => void;
 }) {
+  const { t } = useI18n();
   return (
-    <Dialog open={open} title={mode === "entry" ? "Attach note" : "Add note"} onClose={onClose} className="max-w-5xl">
+    <Dialog open={open} title={mode === "entry" ? t("notes.attach") : t("notes.add")} onClose={onClose} className="max-w-5xl">
       <div className="space-y-4">
-        <Input value={title} onChange={(event) => setTitle(event.target.value)} placeholder="Note title" />
+        <Input value={title} onChange={(event) => setTitle(event.target.value)} placeholder={t("notes.titlePlaceholder")} />
         <div className="grid gap-4 lg:grid-cols-2">
           <Textarea
             className="min-h-72 font-mono text-sm"
             value={markdown}
             onChange={(event) => setMarkdown(event.target.value)}
-            placeholder="# Notes&#10;&#10;Capture operational details, decisions, or links."
+            placeholder={t("notes.markdownPlaceholder")}
           />
           <div className="min-h-72 rounded-xl bg-white/[0.018] p-5">
             {markdown.trim() ? (
-              <div className="prose-threadbase">
+              <div className="prose-potoki">
                 <ReactMarkdown>{markdown}</ReactMarkdown>
               </div>
             ) : (
-              <p className="text-sm leading-7 text-muted-foreground">Markdown preview will appear here as you write.</p>
+              <p className="text-sm leading-7 text-muted-foreground">{t("notes.previewEmpty")}</p>
             )}
           </div>
         </div>
@@ -63,9 +65,9 @@ export function NoteDialog({
                 className="mt-1 h-4 w-4 accent-[hsl(var(--primary))]"
               />
               <span>
-                Show this note in the timeline
+                {t("notes.showTimeline")}
                 <span className="mt-1 block text-xs leading-5 text-muted-foreground">
-                  Creates a note entry with this Markdown file attached.
+                  {t("notes.showTimelineHint")}
                 </span>
               </span>
             </label>
@@ -74,21 +76,21 @@ export function NoteDialog({
                 className="mt-3 min-h-20 resize-none"
                 value={timelineDescription}
                 onChange={(event) => setTimelineDescription(event.target.value)}
-                placeholder="Optional timeline description"
+                placeholder={t("notes.timelineDescription")}
               />
             ) : null}
           </div>
         ) : (
           <p className="rounded-xl bg-white/[0.018] p-4 text-sm leading-7 text-muted-foreground">
-            This note will be attached to the selected timeline entry without creating a new entry.
+            {t("notes.attachHint")}
           </p>
         )}
 
         <div className="flex justify-end gap-2">
           <Button variant="ghost" onClick={onClose}>
-            Cancel
+            {t("common.cancel")}
           </Button>
-          <Button onClick={onSave}>Save note</Button>
+          <Button onClick={onSave}>{t("notes.save")}</Button>
         </div>
       </div>
     </Dialog>

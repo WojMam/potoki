@@ -1,29 +1,29 @@
 {
   "id": "local-ai-integration",
-  "title": "R&D: Local AI integration",
-  "description": "Explore patterns for adding local-only AI assistance inside a restricted engineering workstation.",
+  "title": "R&D: lokalna integracja AI",
+  "description": "Sprawdzenie, jak dodać lokalną pomoc AI w ograniczonym środowisku inżynierskim.",
   "status": "active",
-  "currentContext": "The useful path seems to be a local model runner behind a small command wrapper. No cloud calls, telemetry, credential storage, or background service are acceptable. The next discussion should focus on model packaging and approved artifact distribution.",
+  "currentContext": "Najbardziej sensowny kierunek to lokalny runner modelu uruchamiany przez prosty wrapper komend. Poza zakresem są wywołania do chmury, telemetria, przechowywanie poświadczeń i procesy działające w tle. Następna rozmowa powinna dotyczyć pakowania modeli i dystrybucji zatwierdzonych artefaktów.",
   "nextActions": [
-    "Compare approved local model packaging options",
-    "Write risk note for prompt/content retention",
-    "Sketch command-line handoff flow for code review summaries"
+    "Porównaj zatwierdzone sposoby pakowania modeli lokalnych",
+    "Opisz ryzyko przechowywania promptów i treści",
+    "Rozpisz przepływ przekazywania podsumowań code review"
   ],
   "linkedFiles": [
     {
-      "label": "Research notes",
+      "label": "Notatki badawcze",
       "path": "notes/local-ai-integration/2026-05-12-local-ai-research.md",
       "type": "markdown",
       "addedAt": "2026-05-12T14:20:00.000Z"
     },
     {
-      "label": "Architecture sketch",
+      "label": "Szkic architektury",
       "path": "artifacts/local-ai-integration/local-ai-architecture.drawio",
       "type": "drawio",
       "addedAt": "2026-05-12T15:10:00.000Z"
     },
     {
-      "label": "Testowa",
+      "label": "Notatka testowa",
       "path": "notes/local-ai-integration/2026-05-13-testowa.md",
       "type": "markdown",
       "addedAt": "2026-05-13T14:40:55.980Z"

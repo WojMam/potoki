@@ -1,6 +1,6 @@
-# Threadbase
+# POTOKI
 
-Threadbase is a local-first, offline, file-based context workspace for technical workstreams. It helps you keep track of parallel streams of work, decisions, operational notes, linked local artifacts, and small resume notes without a backend, database, account, telemetry, or network access.
+POTOKI is a local-first, offline, file-based context workspace for technical workstreams. It helps you keep track of parallel streams of work, decisions, operational notes, linked local artifacts, and small resume notes without a backend, database, account, telemetry, or network access.
 
 The filesystem is the source of truth:
 
@@ -17,7 +17,7 @@ Structured data is stored as human-readable JSON. Timeline files use `{ streamId
 
 ## Browser Requirement
 
-Threadbase uses the browser File System Access API, so it must be opened in a Chromium-based browser such as Chrome or Microsoft Edge. If the API is unavailable, the app shows a clear message and does not fall back to hidden browser storage.
+POTOKI uses the browser File System Access API, so it must be opened in a Chromium-based browser such as Chrome or Microsoft Edge. If the API is unavailable, the app shows a clear message and does not fall back to hidden browser storage.
 
 ## Development
 
@@ -46,8 +46,8 @@ After building, copy the `dist` folder to the target machine and open `dist/inde
 
 ## Demo Workspace
 
-The repository includes `demoWorkspace`, a ready-to-open sample workspace with populated streams, timelines, Markdown notes, and linked artifact placeholders. In the app, choose `Open workspace folder` and select `demoWorkspace` to explore realistic Threadbase data.
+The repository includes `demoWorkspace`, a ready-to-open sample workspace with populated streams, timelines, Markdown notes, and linked artifact placeholders. In the app, choose `Open workspace folder` and select `demoWorkspace` to explore realistic POTOKI data.
 
 ## Data Stays Local
 
-Threadbase asks you to select a workspace folder. All user data is read from and written to files in that folder. The app does not upload, sync, or send workspace data anywhere.
+POTOKI asks you to select a workspace folder. All user data is read from and written to files in that folder. The app does not upload, sync, or send workspace data anywhere.

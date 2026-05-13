@@ -4,6 +4,7 @@ import ReactMarkdown from "react-markdown";
 import { Button } from "../../components/ui/button";
 import { Dialog } from "../../components/ui/dialog";
 import { Textarea } from "../../components/ui/textarea";
+import { useI18n } from "../../core/i18n";
 
 export type FilePreviewState = {
   path: string;
@@ -22,6 +23,7 @@ export function FilePreviewDialog({
   onClose: () => void;
   onSave: (path: string, markdown: string) => void;
 }) {
+  const { t } = useI18n();
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState("");
 
@@ -39,7 +41,7 @@ export function FilePreviewDialog({
   return (
     <Dialog
       open={Boolean(preview)}
-      title={preview?.label || "Context file"}
+      title={preview?.label || t("files.contextFile")}
       onClose={onClose}
       className="max-h-[84vh] max-w-[1000px] overflow-hidden rounded-2xl border-white/[0.08] bg-[hsl(var(--card)/0.98)] shadow-[0_28px_90px_rgba(0,0,0,0.28)]"
     >
@@ -59,12 +61,12 @@ export function FilePreviewDialog({
                         setDraft(preview.content ?? "");
                         setEditing(false);
                       }}>
-                        Cancel
+                        {t("common.cancel")}
                       </Button>
-                      <Button size="sm" onClick={save}>Save note</Button>
+                      <Button size="sm" onClick={save}>{t("notes.save")}</Button>
                     </>
                   ) : (
-                    <Button size="sm" variant="secondary" onClick={() => setEditing(true)}>Edit note</Button>
+                    <Button size="sm" variant="secondary" onClick={() => setEditing(true)}>{t("notes.edit")}</Button>
                   )}
                 </div>
               ) : null}
@@ -72,18 +74,18 @@ export function FilePreviewDialog({
           </div>
           <div className="min-h-0 flex-1 overflow-y-auto py-6 pr-1">
             {preview.content === null ? (
-              <p className="text-sm text-muted-foreground">Opening local context...</p>
+              <p className="text-sm text-muted-foreground">{t("files.opening")}</p>
             ) : editing ? (
               <div className="grid gap-4 lg:grid-cols-2">
                 <Textarea className="min-h-[52vh] font-mono text-sm" value={draft} onChange={(event) => setDraft(event.target.value)} />
                 <div className="rounded-xl bg-white/[0.018] p-5">
-                  <div className="prose-threadbase">
+                  <div className="prose-potoki">
                     <ReactMarkdown>{draft}</ReactMarkdown>
                   </div>
                 </div>
               </div>
             ) : preview.isMarkdown ? (
-              <div className="prose-threadbase">
+              <div className="prose-potoki">
                 <ReactMarkdown>{preview.content}</ReactMarkdown>
               </div>
             ) : (

@@ -6,6 +6,7 @@ import type { LinkedFile } from "../core/models/fileLink";
 import type { TimelineEntry, TimelineEntryType } from "../core/models/timeline";
 import type { Workstream, WorkstreamStatus } from "../core/models/workstream";
 import type { WorkspaceManifest } from "../core/models/workspace";
+import { useI18n } from "../core/i18n";
 import { NoteRepository } from "../core/repositories/NoteRepository";
 import { StreamRepository } from "../core/repositories/StreamRepository";
 import { TimelineRepository } from "../core/repositories/TimelineRepository";
@@ -35,6 +36,7 @@ type NoteDialogMode = { kind: "stream" } | { kind: "entry"; entry: TimelineEntry
 const adapter = new FileSystemAccessAdapter();
 
 export function App() {
+  const { t } = useI18n();
   const [root, setRoot] = useState<DirectoryHandle | null>(null);
   const [repos, setRepos] = useState<Repositories | null>(null);
   const [manifest, setManifest] = useState<WorkspaceManifest | null>(null);
@@ -43,7 +45,7 @@ export function App() {
   const [issues, setIssues] = useState<LoadIssue[]>([]);
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
-  const [workspaceName, setWorkspaceName] = useState("Threadbase Workspace");
+  const [workspaceName, setWorkspaceName] = useState(() => t("app.workspaceDefault"));
   const [selectedId, setSelectedId] = useState<string | undefined>();
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [query, setQuery] = useState("");
@@ -123,14 +125,14 @@ export function App() {
       setIssues(result.issues);
       if (!result.manifest) {
         setManifest(null);
-        setError("This folder does not look like a Threadbase workspace. Create a workspace here or choose another folder.");
+        setError(t("errors.notWorkspace"));
         return;
       }
       setManifest(result.manifest);
       setWorkspaceName(result.manifest.name);
       await refresh(nextRepos, result.manifest);
     } catch (err) {
-      setError(toFriendlyError(err, "Permission was denied or the folder could not be opened."));
+      setError(toFriendlyError(err, t("errors.openDenied")));
     } finally {
       setBusy(false);
     }
@@ -147,7 +149,7 @@ export function App() {
       setIssues([]);
       await refresh(nextRepos, nextManifest);
     } catch (err) {
-      setError(toFriendlyError(err, "Could not create the workspace."));
+      setError(toFriendlyError(err, t("errors.createWorkspace")));
     } finally {
       setBusy(false);
     }
@@ -161,7 +163,7 @@ export function App() {
       setManifest(await repos.workspace.touch(manifest));
       setError("");
     } catch (err) {
-      setError(toFriendlyError(err, "Could not write the stream JSON file."));
+      setError(toFriendlyError(err, t("errors.writeStream")));
     }
   }
 
@@ -174,7 +176,7 @@ export function App() {
       setManifest(await repos.workspace.touch(manifest));
       setError("");
     } catch (err) {
-      setError(toFriendlyError(err, "Could not write the timeline JSON file."));
+      setError(toFriendlyError(err, t("errors.writeTimeline")));
     }
   }
 
@@ -186,7 +188,7 @@ export function App() {
       setManifest(await repos.workspace.touch(manifest));
       setError("");
     } catch (err) {
-      setError(toFriendlyError(err, "Could not update the timeline JSON file."));
+      setError(toFriendlyError(err, t("errors.updateTimeline")));
     }
   }
 
@@ -215,7 +217,7 @@ export function App() {
     await createTimelineEntry({
       streamId: selectedStream.id,
       type: "action_done",
-      title: "Resume note cleared",
+      title: t("system.resumeCleared"),
       content: action,
       linkedFiles: [],
     });
@@ -238,7 +240,7 @@ export function App() {
             streamId: selectedStream.id,
             type: "note",
             title: noteTitle.trim(),
-            content: noteTimelineDescription.trim() || `Added note: ${noteTitle.trim()}`,
+            content: noteTimelineDescription.trim() || t("system.noteAdded", { title: noteTitle.trim() }),
             linkedFiles: [linkedFile],
           });
         }
@@ -250,7 +252,7 @@ export function App() {
       setNoteIncludeTimelineEntry(false);
       await previewFile(linkedFile);
     } catch (err) {
-      setError(toFriendlyError(err, "Could not create the Markdown note."));
+      setError(toFriendlyError(err, t("errors.createNote")));
     }
   }
 
@@ -261,7 +263,7 @@ export function App() {
       setFilePreview((current) => (current && current.path === path ? { ...current, content: markdown } : current));
       setError("");
     } catch (err) {
-      setError(toFriendlyError(err, `Could not save ${path}`));
+      setError(toFriendlyError(err, t("errors.saveFile", { path })));
     }
   }
 
@@ -285,7 +287,7 @@ export function App() {
       });
     } catch (err) {
       setFilePreview(null);
-      setError(toFriendlyError(err, `Could not read ${file.path}`));
+      setError(toFriendlyError(err, t("errors.readFile", { path: file.path })));
     }
   }
 
@@ -299,23 +301,23 @@ export function App() {
       await createTimelineEntry({
         streamId: selectedStream.id,
         type: "file_link",
-        title: `Linked ${file.name}`,
+        title: t("system.linkedFile", { name: file.name }),
         content: relative,
         linkedFiles: [linkedFile],
       });
     } catch (err) {
-      setError(toFriendlyError(err, "Could not link the selected file."));
+      setError(toFriendlyError(err, t("errors.linkFile")));
     }
   }
 
   async function createWorkLog() {
     if (!selectedStream) return;
-    const duration = workLogHours.trim() ? `\nDuration: ${workLogHours.trim()} hour(s)` : "";
+    const duration = workLogHours.trim() ? `\n${t("system.duration", { hours: workLogHours.trim() })}` : "";
     await createTimelineEntry({
       streamId: selectedStream.id,
       type: "work_log",
-      title: "Worked on this today",
-      content: `${workLogNote.trim() || "Touched this stream and refreshed context."}${duration}`,
+      title: t("system.workLogTitle"),
+      content: `${workLogNote.trim() || t("system.workLogFallback")}${duration}`,
       linkedFiles: [],
     });
     setWorkLogOpen(false);
@@ -357,7 +359,7 @@ export function App() {
       setNewStreamDescription("");
       setError("");
     } catch (err) {
-      setError(toFriendlyError(err, "Could not create the stream files."));
+      setError(toFriendlyError(err, t("errors.createStream")));
     }
   }
 
@@ -487,7 +489,7 @@ export function App() {
       <FilePreviewDialog preview={filePreview} onClose={() => setFilePreview(null)} onSave={saveExistingNote} />
       {!streams.length ? (
         <div className="fixed inset-x-0 bottom-8 flex justify-center">
-          <EmptyState title="No streams yet" body="Create a stream to start building local memory." action={<Button onClick={() => setNewStreamOpen(true)}>New Stream</Button>} />
+          <EmptyState title={t("stream.emptyTitle")} body={t("stream.emptyBody")} action={<Button onClick={() => setNewStreamOpen(true)}>{t("sidebar.new")}</Button>} />
         </div>
       ) : null}
     </div>
@@ -505,9 +507,9 @@ function linkedFileFromPath(path: string, label: string, type: string): LinkedFi
 
 function toFriendlyError(error: unknown, fallback: string) {
   if (!(error instanceof Error)) return fallback;
-  if (error.name === "AbortError") return "No folder or file was selected.";
-  if (error.name === "NotAllowedError") return "Permission was denied. Reopen the workspace folder and allow read/write access.";
-  if (error.name === "NotFoundError") return "A required file or folder is missing from the workspace.";
+  if (error.name === "AbortError") return fallback;
+  if (error.name === "NotAllowedError") return fallback;
+  if (error.name === "NotFoundError") return fallback;
   if (error.message.includes("Malformed JSON")) return error.message;
   return error.message || fallback;
 }

@@ -5,12 +5,12 @@
       "id": "entry-arch-001",
       "streamId": "architecture-diagram-review",
       "type": "file_link",
-      "title": "Linked current diagram",
-      "content": "Current Draw.io file linked from the artifacts folder.",
+      "title": "Dołączony aktualny diagram",
+      "content": "Aktualny plik Draw.io dołączony z folderu artefaktów.",
       "createdAt": "2026-05-12T09:05:00.000Z",
       "linkedFiles": [
         {
-          "label": "Current diagram",
+          "label": "Aktualny diagram",
           "path": "artifacts/architecture-diagram-review/current-architecture.drawio",
           "type": "drawio",
           "addedAt": "2026-05-12T09:05:00.000Z"
@@ -21,12 +21,12 @@
       "id": "entry-arch-002",
       "streamId": "architecture-diagram-review",
       "type": "note",
-      "title": "Review pass",
-      "content": "Diagram matches the synchronous flow. Batch ingestion and archival retention are still under-described.",
+      "title": "Przejście przeglądowe",
+      "content": "Diagram zgadza się z przepływem synchronicznym. Batch ingestion i retencja archiwum są jeszcze opisane zbyt słabo.",
       "createdAt": "2026-05-12T09:20:00.000Z",
       "linkedFiles": [
         {
-          "label": "Diagram review note",
+          "label": "Notatka z przeglądu diagramu",
           "path": "notes/architecture-diagram-review/2026-05-12-diagram-review.md",
           "type": "markdown",
           "addedAt": "2026-05-12T09:00:00.000Z"
@@ -37,8 +37,8 @@
       "id": "entry-arch-003",
       "streamId": "architecture-diagram-review",
       "type": "note",
-      "title": "Parked for deployment notes",
-      "content": "Need confirmation from deployment notes before changing the archive portion of the diagram.",
+      "title": "Uśpione do notatek wdrożeniowych",
+      "content": "Potrzebne jest potwierdzenie z notatek wdrożeniowych przed zmianą części diagramu dotyczącej archiwum.",
       "createdAt": "2026-05-12T09:30:00.000Z",
       "linkedFiles": []
     }

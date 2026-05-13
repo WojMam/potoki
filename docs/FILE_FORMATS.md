@@ -4,7 +4,7 @@
 
 ```json
 {
-  "name": "Threadbase Workspace",
+  "name": "POTOKI Workspace",
   "version": "1.0.0",
   "createdAt": "2026-05-13T08:00:00.000Z",
   "updatedAt": "2026-05-13T08:00:00.000Z",

@@ -2,7 +2,7 @@
 
 ## Open Or Create A Workspace
 
-Open `index.html` in Chrome or Edge. Choose `Open workspace folder` for an existing Threadbase folder, or `Create workspace` to initialize a new folder.
+Open `index.html` in Chrome or Edge. Choose `Open workspace folder` for an existing POTOKI folder, or `Create workspace` to initialize a new folder.
 
 `Create sample workspace` seeds three example streams:
 
@@ -28,7 +28,7 @@ Use `Add note` to create a Markdown file under `notes/{streamId}/`. The note is 
 
 ## Linked Files
 
-Use `Link file` to store metadata for an existing local file. Threadbase stores a relative path when the file is inside the selected workspace folder. It does not upload or copy the file.
+Use `Link file` to store metadata for an existing local file. POTOKI stores a relative path when the file is inside the selected workspace folder. It does not upload or copy the file.
 
 ## Work Logs
 

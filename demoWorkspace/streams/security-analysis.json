@@ -1,13 +1,13 @@
 {
   "id": "security-analysis",
-  "title": "Security analysis: export workflow",
-  "description": "Capture security review notes for a local export workflow used by operations analysts.",
+  "title": "Analiza bezpieczeństwa eksportu",
+  "description": "Notatki z przeglądu bezpieczeństwa lokalnego eksportu używanego przez analityków operacyjnych.",
   "status": "archived",
-  "currentContext": "Review completed. The accepted decision is to keep export manifests local, redact secrets before writing files, and avoid retaining raw request payloads.",
+  "currentContext": "Przegląd zakończony. Przyjęta decyzja: manifesty eksportu pozostają lokalne, sekrety są redagowane przed zapisem plików, a surowe payloady żądań nie są utrwalane.",
   "nextActions": [],
   "linkedFiles": [
     {
-      "label": "Security review summary",
+      "label": "Podsumowanie przeglądu bezpieczeństwa",
       "path": "notes/security-analysis/2026-05-10-security-review.md",
       "type": "markdown",
       "addedAt": "2026-05-10T16:00:00.000Z"

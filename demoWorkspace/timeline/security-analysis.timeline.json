@@ -5,8 +5,8 @@
       "id": "entry-sec-001",
       "streamId": "security-analysis",
       "type": "note",
-      "title": "Threat model pass",
-      "content": "Primary risks are accidental secret persistence, raw payload retention, and unclear local export ownership.",
+      "title": "Przejście przez model zagrożeń",
+      "content": "Główne ryzyka to przypadkowe utrwalenie sekretów, zapis surowych payloadów i niejasna odpowiedzialność za lokalny eksport.",
       "createdAt": "2026-05-09T14:10:00.000Z",
       "linkedFiles": []
     },
@@ -14,8 +14,8 @@
       "id": "entry-sec-002",
       "streamId": "security-analysis",
       "type": "decision",
-      "title": "Redact before writing",
-      "content": "Exporter must redact secrets before any local file write. Raw request payloads should stay in memory only for the duration of the explicit export action.",
+      "title": "Redakcja przed zapisem",
+      "content": "Eksporter musi redagować sekrety przed każdym zapisem do lokalnego pliku. Surowe payloady żądań zostają w pamięci tylko na czas jawnej akcji eksportu.",
       "createdAt": "2026-05-10T11:30:00.000Z",
       "linkedFiles": []
     },
@@ -23,12 +23,12 @@
       "id": "entry-sec-003",
       "streamId": "security-analysis",
       "type": "action_done",
-      "title": "Review completed",
-      "content": "Security summary written and linked. No open follow-up actions remain for this stream.",
+      "title": "Przegląd zakończony",
+      "content": "Podsumowanie bezpieczeństwa zostało zapisane i dołączone. Nie ma otwartych notatek powrotu dla tego potoku.",
       "createdAt": "2026-05-10T16:40:00.000Z",
       "linkedFiles": [
         {
-          "label": "Security review summary",
+          "label": "Podsumowanie przeglądu bezpieczeństwa",
           "path": "notes/security-analysis/2026-05-10-security-review.md",
           "type": "markdown",
           "addedAt": "2026-05-10T16:00:00.000Z"
