@@ -41,6 +41,8 @@ jobs:
       - name: Resolve release metadata
         id: metadata
         run: |
+          APP_NAME="${GITHUB_REPOSITORY##*/}"
+
           if [[ "${GITHUB_REF_TYPE}" == "tag" ]]; then
             TAG="${GITHUB_REF_NAME}"
           else
@@ -52,7 +54,7 @@ jobs:
             RELEASE_NAME="Release ${TAG}"
           fi
 
-          ZIP_NAME="potoki-${TAG}.zip"
+          ZIP_NAME="${APP_NAME}-${TAG}.zip"
 
           echo "tag=${TAG}" >> "${GITHUB_OUTPUT}"
           echo "release_name=${RELEASE_NAME}" >> "${GITHUB_OUTPUT}"
@@ -60,6 +62,10 @@ jobs:
 
       - name: Package dist directory
         run: |
+          if [[ ! -d dist ]]; then
+            echo "dist directory not found after build"
+            exit 1
+          fi
           cd dist
           zip -r "../${{ steps.metadata.outputs.zip_name }}" .
 
