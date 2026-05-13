@@ -1,0 +1,55 @@
+{
+  "streamId": "local-ai-integration",
+  "entries": [
+    {
+      "id": "entry-local-ai-001",
+      "streamId": "local-ai-integration",
+      "type": "note",
+      "title": "Initial constraints captured",
+      "content": "Environment allows static local apps and human-readable files. Network calls, auth, telemetry, background daemons, and local databases are out of scope.",
+      "createdAt": "2026-05-10T08:30:00.000Z",
+      "linkedFiles": []
+    },
+    {
+      "id": "entry-local-ai-002",
+      "streamId": "local-ai-integration",
+      "type": "decision",
+      "title": "Keep model interaction explicit",
+      "content": "Any AI workflow should be triggered by a visible user action. No passive folder watching or background processing.",
+      "createdAt": "2026-05-11T13:15:00.000Z",
+      "linkedFiles": []
+    },
+    {
+      "id": "entry-local-ai-003",
+      "streamId": "local-ai-integration",
+      "type": "file_link",
+      "title": "Linked architecture sketch",
+      "content": "Architecture sketch added for the local command-wrapper option.",
+      "createdAt": "2026-05-12T15:10:00.000Z",
+      "linkedFiles": [
+        {
+          "label": "Architecture sketch",
+          "path": "artifacts/local-ai-integration/local-ai-architecture.drawio",
+          "type": "drawio",
+          "addedAt": "2026-05-12T15:10:00.000Z"
+        }
+      ]
+    },
+    {
+      "id": "entry-local-ai-004",
+      "streamId": "local-ai-integration",
+      "type": "work_log",
+      "title": "Worked on this today",
+      "content": "Reviewed local packaging constraints and narrowed options to command wrapper plus explicit file handoff.\nDuration: 1.5 hour(s)",
+      "createdAt": "2026-05-13T09:45:00.000Z",
+      "linkedFiles": [
+        {
+          "label": "Research notes",
+          "path": "notes/local-ai-integration/2026-05-12-local-ai-research.md",
+          "type": "markdown",
+          "addedAt": "2026-05-12T14:20:00.000Z"
+        }
+      ]
+    }
+  ]
+}

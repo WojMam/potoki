@@ -1,0 +1,29 @@
+import * as React from "react";
+import { X } from "lucide-react";
+import { Button } from "./button";
+import { cn } from "./utils";
+
+type DialogProps = {
+  open: boolean;
+  title: string;
+  children: React.ReactNode;
+  onClose: () => void;
+  className?: string;
+};
+
+export function Dialog({ open, title, children, onClose, className }: DialogProps) {
+  if (!open) return null;
+  return (
+    <div className="fixed inset-0 z-50 grid place-items-center bg-black/60 p-4 backdrop-blur-sm" role="dialog" aria-modal="true">
+      <div className={cn("max-h-[88vh] w-full max-w-2xl overflow-auto rounded-lg border bg-card p-6 shadow-glow", className)}>
+        <div className="mb-4 flex items-center justify-between gap-4">
+          <h2 className="text-lg font-semibold">{title}</h2>
+          <Button type="button" size="icon" variant="ghost" onClick={onClose} aria-label="Close dialog">
+            <X className="h-4 w-4" />
+          </Button>
+        </div>
+        {children}
+      </div>
+    </div>
+  );
+}

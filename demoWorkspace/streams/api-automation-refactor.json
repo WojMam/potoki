@@ -1,0 +1,30 @@
+{
+  "id": "api-automation-refactor",
+  "title": "API automation refactor",
+  "description": "Reduce brittle setup in API tests and align fixtures with the latest service contracts.",
+  "status": "waiting",
+  "priority": "medium",
+  "tags": ["api", "testing", "refactor", "fixtures"],
+  "currentContext": "Fixture helpers are duplicated across three suites. Refactor can continue after the platform team publishes the final contract export. Current notes capture the intended helper boundaries.",
+  "nextActions": [
+    "Diff contract export against current fixtures",
+    "List helper functions that can be collapsed",
+    "Confirm retry policy with service owner"
+  ],
+  "linkedFiles": [
+    {
+      "label": "Refactor plan",
+      "path": "notes/api-automation-refactor/2026-05-11-refactor-plan.md",
+      "type": "markdown",
+      "addedAt": "2026-05-11T10:05:00.000Z"
+    },
+    {
+      "label": "Fixture map",
+      "path": "artifacts/api-automation-refactor/fixture-map.json",
+      "type": "json",
+      "addedAt": "2026-05-11T11:30:00.000Z"
+    }
+  ],
+  "createdAt": "2026-05-10T09:30:00.000Z",
+  "updatedAt": "2026-05-12T16:00:00.000Z"
+}

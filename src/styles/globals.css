@@ -1,0 +1,101 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: dark;
+    --background: 220 23% 8%;
+    --foreground: 210 20% 93%;
+    --card: 220 18% 11%;
+    --card-foreground: 210 20% 94%;
+    --muted: 220 16% 16%;
+    --muted-foreground: 214 14% 70%;
+    --accent: 189 48% 18%;
+    --accent-foreground: 190 35% 92%;
+    --primary: 173 60% 43%;
+    --primary-foreground: 180 30% 6%;
+    --secondary: 222 15% 17%;
+    --secondary-foreground: 210 20% 92%;
+    --destructive: 358 62% 45%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 220 13% 19%;
+    --input: 220 13% 20%;
+    --ring: 173 60% 43%;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-[15px] text-foreground antialiased;
+    font-family:
+      Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+      sans-serif;
+  }
+
+  button,
+  input,
+  textarea,
+  select {
+    font: inherit;
+  }
+
+  ::selection {
+    background: hsl(var(--primary) / 0.32);
+  }
+}
+
+@layer components {
+  .panel {
+    @apply border-border/50 bg-card/75 backdrop-blur-xl;
+  }
+
+  .surface-raised {
+    @apply border border-white/[0.055] bg-white/[0.04] shadow-[0_16px_48px_rgba(0,0,0,0.20)];
+  }
+
+  .surface-subtle {
+    @apply border border-white/[0.045] bg-white/[0.025];
+  }
+
+  .section-label {
+    @apply text-[11px] font-medium uppercase tracking-[0.14em] text-muted-foreground;
+  }
+
+  .prose-threadbase {
+    @apply text-[15px] leading-7 text-foreground;
+  }
+
+  .prose-threadbase h1,
+  .prose-threadbase h2,
+  .prose-threadbase h3 {
+    @apply mb-2 mt-5 font-semibold text-foreground;
+  }
+
+  .prose-threadbase p {
+    @apply my-3 text-muted-foreground;
+  }
+
+  .prose-threadbase ul,
+  .prose-threadbase ol {
+    @apply my-3 pl-5 text-muted-foreground;
+  }
+
+  .prose-threadbase li {
+    @apply my-1;
+  }
+
+  .prose-threadbase code {
+    @apply rounded bg-muted px-1.5 py-0.5 text-[0.86em] text-foreground;
+  }
+
+  .prose-threadbase pre {
+    @apply my-4 overflow-auto rounded-md border bg-background p-4;
+  }
+
+  .prose-threadbase blockquote {
+    @apply my-4 border-l-2 border-primary/50 pl-4 text-muted-foreground;
+  }
+}

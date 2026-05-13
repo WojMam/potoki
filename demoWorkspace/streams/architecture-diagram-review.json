@@ -1,0 +1,30 @@
+{
+  "id": "architecture-diagram-review",
+  "title": "Architecture diagram review",
+  "description": "Review local architecture diagrams and connect open questions to decisions.",
+  "status": "paused",
+  "priority": "low",
+  "tags": ["architecture", "documentation", "drawio"],
+  "currentContext": "Diagram is mostly current, but batch ingestion and downstream archive retention need one more pass. Paused until deployment notes are confirmed.",
+  "nextActions": [
+    "Add batch ingestion boundary",
+    "Check archive retention wording",
+    "Link final review note to diagram"
+  ],
+  "linkedFiles": [
+    {
+      "label": "Diagram review note",
+      "path": "notes/architecture-diagram-review/2026-05-12-diagram-review.md",
+      "type": "markdown",
+      "addedAt": "2026-05-12T09:00:00.000Z"
+    },
+    {
+      "label": "Current diagram",
+      "path": "artifacts/architecture-diagram-review/current-architecture.drawio",
+      "type": "drawio",
+      "addedAt": "2026-05-12T09:05:00.000Z"
+    }
+  ],
+  "createdAt": "2026-05-10T12:00:00.000Z",
+  "updatedAt": "2026-05-12T09:30:00.000Z"
+}

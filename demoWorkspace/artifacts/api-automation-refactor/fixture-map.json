@@ -1,0 +1,5 @@
+{
+  "suites": ["accounts", "payments", "notifications"],
+  "duplicatedHelpers": ["auth setup", "payload defaults", "response assertions"],
+  "targetHelpers": ["fixture factories", "small assertion helpers"]
+}

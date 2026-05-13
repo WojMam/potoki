@@ -1,0 +1,46 @@
+{
+  "streamId": "architecture-diagram-review",
+  "entries": [
+    {
+      "id": "entry-arch-001",
+      "streamId": "architecture-diagram-review",
+      "type": "file_link",
+      "title": "Linked current diagram",
+      "content": "Current Draw.io file linked from the artifacts folder.",
+      "createdAt": "2026-05-12T09:05:00.000Z",
+      "linkedFiles": [
+        {
+          "label": "Current diagram",
+          "path": "artifacts/architecture-diagram-review/current-architecture.drawio",
+          "type": "drawio",
+          "addedAt": "2026-05-12T09:05:00.000Z"
+        }
+      ]
+    },
+    {
+      "id": "entry-arch-002",
+      "streamId": "architecture-diagram-review",
+      "type": "note",
+      "title": "Review pass",
+      "content": "Diagram matches the synchronous flow. Batch ingestion and archival retention are still under-described.",
+      "createdAt": "2026-05-12T09:20:00.000Z",
+      "linkedFiles": [
+        {
+          "label": "Diagram review note",
+          "path": "notes/architecture-diagram-review/2026-05-12-diagram-review.md",
+          "type": "markdown",
+          "addedAt": "2026-05-12T09:00:00.000Z"
+        }
+      ]
+    },
+    {
+      "id": "entry-arch-003",
+      "streamId": "architecture-diagram-review",
+      "type": "waiting",
+      "title": "Paused for deployment notes",
+      "content": "Need confirmation from deployment notes before changing the archive portion of the diagram.",
+      "createdAt": "2026-05-12T09:30:00.000Z",
+      "linkedFiles": []
+    }
+  ]
+}
