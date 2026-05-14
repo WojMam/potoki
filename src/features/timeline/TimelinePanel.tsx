@@ -1,5 +1,6 @@
 import { ArrowLeft, FileText, NotebookPen, Pencil, PlusCircle } from "lucide-react";
 import { useEffect, useState, type KeyboardEvent } from "react";
+import { FlowScrollArea } from "../../components/layout/FlowScrollArea";
 import { Badge } from "../../components/ui/badge";
 import { Button } from "../../components/ui/button";
 import { Select } from "../../components/ui/select";
@@ -88,7 +89,7 @@ export function TimelinePanel({
   };
 
   return (
-    <main className="h-screen min-h-0 flex-1 overflow-y-auto overflow-x-hidden">
+    <FlowScrollArea as="main" className="h-screen min-h-0 flex-1" viewportClassName="overflow-x-hidden">
       <div className="mx-auto max-w-3xl px-8 py-12 xl:max-w-[820px]">
         <div className="mb-10">
           <button
@@ -132,27 +133,27 @@ export function TimelinePanel({
           </div>
         </section>
 
-        <div className="space-y-9">
+        <div className="space-y-11">
           {Object.entries(grouped).map(([date, dateEntries]) => (
             <section key={date}>
-              <div className="sticky top-0 z-10 mb-5 flex items-center gap-4 bg-[hsl(var(--background)/0.82)] py-2 backdrop-blur">
-                <div className="h-px flex-1 bg-white/[0.024]" />
-                <div className="rounded-full bg-background/70 px-3 py-1 text-[10px] font-medium uppercase tracking-[0.14em] text-muted-foreground/76">
+              <div className="sticky top-0 z-10 mb-4 flex items-center gap-4 bg-[hsl(var(--background)/0.80)] py-2 backdrop-blur">
+                <div className="h-px flex-1 bg-white/[0.018]" />
+                <div className="rounded-full bg-background/55 px-3 py-1 text-[10px] font-medium uppercase tracking-[0.14em] text-muted-foreground/68">
                   {formatDate(date)}
                 </div>
-                <div className="h-px flex-1 bg-white/[0.024]" />
+                <div className="h-px flex-1 bg-white/[0.018]" />
               </div>
-              <div className="space-y-1">
+              <div className="space-y-0.5">
                 {dateEntries.map((entry) => {
                   const editing = editingId === entry.id;
                   return (
                     <article
                       key={entry.id}
-                      className={`group rounded-xl border-l bg-white/[0.008] px-4 py-1.5 transition-all duration-300 ease-out hover:bg-primary/[0.026] ${editing ? "bg-primary/[0.045] shadow-[inset_0_0_0_1px_hsl(var(--primary)/0.18)]" : ""} ${typeAccent[entry.type]}`}
+                      className={`group rounded-xl border-l bg-white/[0.018] px-4 py-2 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.014)] transition-all duration-300 ease-out hover:-translate-y-0.5 hover:bg-primary/[0.032] hover:shadow-[inset_0_0_0_1px_hsl(var(--primary)/0.075),0_10px_24px_rgba(0,0,0,0.10)] ${editing ? "bg-primary/[0.045] shadow-[inset_0_0_0_1px_hsl(var(--primary)/0.18)]" : ""} ${typeAccent[entry.type]}`}
                     >
                       <div className="flex flex-wrap items-center justify-between gap-2">
                         <div className="flex min-w-0 flex-1 items-center gap-2">
-                          <Badge className="bg-transparent px-0 text-[9.5px] tracking-[0.13em] text-muted-foreground/66">{timelineTypeLabel(entry.type)}</Badge>
+                          <Badge className="bg-transparent px-0 text-[9.5px] tracking-[0.13em] text-muted-foreground/58">{timelineTypeLabel(entry.type)}</Badge>
                           {editing ? (
                             <Input
                               value={entryEdit.title}
@@ -162,11 +163,11 @@ export function TimelinePanel({
                               aria-label={t("timeline.editTitle")}
                             />
                           ) : (
-                            <h2 className="min-w-0 truncate text-sm font-medium text-foreground/94">{entry.title}</h2>
+                            <h2 className="min-w-0 truncate text-sm font-semibold text-foreground/96">{entry.title}</h2>
                           )}
                         </div>
                         <div className="flex items-center gap-1.5">
-                          <time className="text-[11px] text-muted-foreground/72">{formatDateTime(entry.createdAt)}</time>
+                          <time className="text-[11px] text-muted-foreground/60">{formatDateTime(entry.createdAt)}</time>
                           {!editing ? (
                             <button
                               type="button"
@@ -198,7 +199,7 @@ export function TimelinePanel({
                           </div>
                         </>
                       ) : (
-                        <p className="mt-0.5 whitespace-pre-wrap text-[15px] leading-7 text-foreground/80">{entry.content}</p>
+                        <p className="mt-1 whitespace-pre-wrap text-[15px] leading-7 text-foreground/82">{entry.content}</p>
                       )}
                       <div className="mt-1.5 flex flex-wrap gap-1.5">
                         <Button size="sm" variant="ghost" className="h-7 bg-transparent px-2 text-muted-foreground/76 hover:bg-primary/[0.055] hover:text-primary-foreground" onClick={() => onAttachNote(entry)}>
@@ -221,6 +222,6 @@ export function TimelinePanel({
           {!entries.length ? <div className="rounded-[1.5rem] bg-white/[0.026] p-6 text-sm text-muted-foreground">{t("timeline.empty")}</div> : null}
         </div>
       </div>
-    </main>
+    </FlowScrollArea>
   );
 }

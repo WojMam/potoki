@@ -36,7 +36,7 @@ export default {
         },
       },
       boxShadow: {
-        glow: "0 18px 60px rgba(0, 0, 0, 0.28)",
+        glow: "inset 0 1px 0 rgba(255,255,255,0.025), 0 18px 42px rgba(0,0,0,0.24)",
       },
     },
   },

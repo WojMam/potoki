@@ -72,7 +72,7 @@ export function FilePreviewDialog({
               ) : null}
             </div>
           </div>
-          <div className="min-h-0 flex-1 overflow-y-auto py-6 pr-1">
+          <div className="py-6 pr-1">
             {preview.content === null ? (
               <p className="text-sm text-muted-foreground">{t("files.opening")}</p>
             ) : editing ? (

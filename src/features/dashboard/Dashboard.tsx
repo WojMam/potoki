@@ -1,4 +1,5 @@
 import { Clock3 } from "lucide-react";
+import { FlowScrollArea } from "../../components/layout/FlowScrollArea";
 import { useI18n } from "../../core/i18n";
 import type { Workstream } from "../../core/models/workstream";
 import { formatDateTime } from "../../core/utils/date";
@@ -20,7 +21,7 @@ export function Dashboard({
   const parkedCount = streams.filter((stream) => stream.status === "parked").length;
 
   return (
-    <main className="h-screen min-h-0 flex-1 overflow-y-auto overflow-x-hidden">
+    <FlowScrollArea as="main" className="h-screen min-h-0 flex-1" viewportClassName="overflow-x-hidden">
       <div className="mx-auto w-full max-w-6xl px-8 py-12 xl:py-16">
         <header className="max-w-4xl">
           <p className="section-label">{t("dashboard.eyebrow")}</p>
@@ -79,6 +80,6 @@ export function Dashboard({
           </div>
         </section>
       </div>
-    </main>
+    </FlowScrollArea>
   );
 }

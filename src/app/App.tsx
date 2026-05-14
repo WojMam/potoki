@@ -16,6 +16,7 @@ import { createId, slugify } from "../core/utils/ids";
 import { Dashboard } from "../features/dashboard/Dashboard";
 import { FilePreviewDialog, type FilePreviewState } from "../features/notes/FilePreviewDialog";
 import { NoteDialog } from "../features/notes/NoteDialog";
+import { SettingsDialog } from "../features/settings/SettingsDialog";
 import { streamMatchesSearch } from "../features/search/search";
 import { TimelinePanel } from "../features/timeline/TimelinePanel";
 import { WorkLogDialog } from "../features/timeline/WorkLogDialog";
@@ -68,6 +69,7 @@ export function App() {
   const [workLogNote, setWorkLogNote] = useState("");
   const [workLogHours, setWorkLogHours] = useState("");
   const [newStreamOpen, setNewStreamOpen] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
   const [newStreamTitle, setNewStreamTitle] = useState("");
   const [newStreamDescription, setNewStreamDescription] = useState("");
 
@@ -408,6 +410,7 @@ export function App() {
         onSelect={setSelectedId}
         onToggleCollapsed={() => setSidebarCollapsed((value) => !value)}
         onNew={() => setNewStreamOpen(true)}
+        onOpenSettings={() => setSettingsOpen(true)}
       />
       <div className="min-h-0 min-w-0 flex-1 transition-[width] duration-[240ms] ease-in-out lg:flex">
         {selectedStream ? (
@@ -486,6 +489,7 @@ export function App() {
         onClose={() => setNewStreamOpen(false)}
         onCreate={createStream}
       />
+      <SettingsDialog open={settingsOpen} onClose={() => setSettingsOpen(false)} />
       <FilePreviewDialog preview={filePreview} onClose={() => setFilePreview(null)} onSave={saveExistingNote} />
       {!streams.length ? (
         <div className="fixed inset-x-0 bottom-8 flex justify-center">

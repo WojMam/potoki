@@ -3,6 +3,22 @@
   "entries": [
     {
       "streamId": "local-ai-integration",
+      "type": "note",
+      "title": "Spotkanie o Gcloud",
+      "content": "Wystawiłem pozwolenie o gclouda na \"pozwoleniach\"",
+      "linkedFiles": [
+        {
+          "label": "Minutki",
+          "path": "notes/local-ai-integration/2026-05-14-minutki.md",
+          "type": "markdown",
+          "addedAt": "2026-05-14T09:45:05.445Z"
+        }
+      ],
+      "id": "entry-mp5axs78-rjmr35o",
+      "createdAt": "2026-05-14T09:44:31.748Z"
+    },
+    {
+      "streamId": "local-ai-integration",
       "type": "work_log",
       "title": "Testowy wpis pracy",
       "content": "Krótki test zapisu pracy w potoku.",

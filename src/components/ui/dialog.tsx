@@ -1,5 +1,6 @@
 import * as React from "react";
 import { X } from "lucide-react";
+import { FlowScrollArea } from "../layout/FlowScrollArea";
 import { useI18n } from "../../core/i18n";
 import { Button } from "./button";
 import { cn } from "./utils";
@@ -33,14 +34,16 @@ export function Dialog({ open, title, children, onClose, className }: DialogProp
         if (event.target === event.currentTarget) onClose();
       }}
     >
-      <div className={cn("max-h-[88vh] w-full max-w-2xl overflow-auto rounded-xl border border-white/[0.07] bg-card/95 p-6 shadow-glow", className)}>
+      <div className={cn("flex max-h-[88vh] w-full max-w-2xl flex-col overflow-hidden rounded-xl border border-white/[0.07] bg-card/95 p-6 shadow-glow", className)}>
         <div className="mb-4 flex items-center justify-between gap-4">
           <h2 className="text-lg font-semibold">{title}</h2>
           <Button type="button" size="icon" variant="ghost" onClick={onClose} aria-label={t("common.closeDialog")}>
             <X className="h-4 w-4" />
           </Button>
         </div>
-        {children}
+        <FlowScrollArea className="min-h-0 flex-1" viewportClassName="pr-3">
+          {children}
+        </FlowScrollArea>
       </div>
     </div>
   );

@@ -106,7 +106,7 @@ export function StreamDetails({
           <div className="space-y-1">
             {stream.nextActions.map((action) => (
               <div key={action} className="flex items-start gap-3 rounded-lg px-1 py-0.5 transition duration-200 ease-out hover:bg-white/[0.018]">
-                <span className="mt-2.5 h-1.5 w-1.5 shrink-0 rounded-full bg-primary/70 shadow-[0_0_14px_hsl(var(--primary)/0.16)]" />
+                <span className="mt-2.5 h-1.5 w-1.5 shrink-0 rounded-full bg-primary/70" />
                 <span className="flex-1 text-sm leading-6 text-foreground/86">{action}</span>
                 <Button size="icon" variant="ghost" className="h-7 w-7 text-muted-foreground/55 hover:text-foreground/85" onClick={() => onDoneAction(action)} aria-label={t("context.clearNext")}>
                   <Check className="h-3.5 w-3.5" />

@@ -1,4 +1,5 @@
 import { FolderOpen, PlusCircle } from "lucide-react";
+import { FlowScrollArea } from "../../components/layout/FlowScrollArea";
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
 import { Card } from "../../components/ui/card";
@@ -19,11 +20,11 @@ export function WorkspaceGate({ workspaceName, setWorkspaceName, onOpen, onCreat
   const { t } = useI18n();
   const supported = FileSystemAccessAdapter.isSupported();
   return (
-    <main className="workspace-bg min-h-screen px-5 py-10">
+    <FlowScrollArea as="main" className="workspace-bg h-screen" viewportClassName="px-5 py-10">
       <section className="mx-auto flex min-h-[calc(100vh-5rem)] max-w-4xl flex-col justify-center">
         <div className="mb-8">
           <p className="flex items-center gap-2 text-sm font-medium text-primary">
-            <span className="grid h-8 w-8 place-items-center rounded-lg border border-primary/14 bg-primary/[0.08] shadow-[0_0_28px_hsl(var(--primary)/0.08)]">
+            <span className="grid h-8 w-8 place-items-center rounded-lg border border-primary/18 bg-primary/[0.085] shadow-[inset_0_1px_0_rgba(255,255,255,0.035)]">
               <PotokiMark className="h-5 w-5" />
             </span>
             {t("workspace.eyebrow")}
@@ -63,6 +64,6 @@ export function WorkspaceGate({ workspaceName, setWorkspaceName, onOpen, onCreat
           </Card>
         )}
       </section>
-    </main>
+    </FlowScrollArea>
   );
 }
