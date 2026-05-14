@@ -49,6 +49,11 @@ export class FileSystemAccessAdapter {
     await writable.close();
   }
 
+  async removeFile(root: DirectoryHandle, path: string) {
+    const { dir, name } = await this.resolveParent(root, path, false);
+    await dir.removeEntry(name);
+  }
+
   async exists(root: DirectoryHandle, path: string) {
     try {
       const { dir, name } = await this.resolveParent(root, path, false);

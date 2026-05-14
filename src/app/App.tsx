@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { EmptyState } from "../components/layout/EmptyState";
 import { Button } from "../components/ui/button";
+import { ConfirmationDialog } from "../components/ui/confirmation-dialog";
 import { FileSystemAccessAdapter, type DirectoryHandle } from "../core/filesystem/FileSystemAccessAdapter";
 import type { LinkedFile } from "../core/models/fileLink";
 import type { TimelineEntry, TimelineEntryType } from "../core/models/timeline";
@@ -33,6 +34,7 @@ type Repositories = {
 };
 
 type NoteDialogMode = { kind: "stream" } | { kind: "entry"; entry: TimelineEntry };
+type DeleteTarget = { kind: "stream"; stream: Workstream } | { kind: "entry"; entry: TimelineEntry } | null;
 
 const adapter = new FileSystemAccessAdapter();
 
@@ -72,6 +74,7 @@ export function App() {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [newStreamTitle, setNewStreamTitle] = useState("");
   const [newStreamDescription, setNewStreamDescription] = useState("");
+  const [deleteTarget, setDeleteTarget] = useState<DeleteTarget>(null);
 
   const selectedStream = streams.find((stream) => stream.id === selectedId);
   const selectedEntries = entries.filter((entry) => entry.streamId === selectedId);
@@ -194,6 +197,45 @@ export function App() {
     }
   }
 
+  async function deleteTimelineEntry(entry: TimelineEntry) {
+    if (!repos || !manifest) return;
+    try {
+      const nextEntries = await repos.timeline.deleteEntry(entry.streamId, entry.id);
+      setEntries((current) => [...current.filter((item) => item.streamId !== entry.streamId), ...nextEntries]);
+      setManifest(await repos.workspace.touch(manifest));
+      setError("");
+    } catch (err) {
+      setError(toFriendlyError(err, t("errors.deleteTimelineEntry")));
+    }
+  }
+
+  async function deleteStream(stream: Workstream) {
+    if (!repos || !manifest) return;
+    try {
+      await repos.streams.delete(stream.id);
+      await repos.timeline.deleteTimeline(stream.id);
+      setStreams((current) => current.filter((item) => item.id !== stream.id));
+      setEntries((current) => current.filter((entry) => entry.streamId !== stream.id));
+      setSelectedId(undefined);
+      setEditStream(null);
+      setManifest(await repos.workspace.touch(manifest));
+      setError("");
+    } catch (err) {
+      setError(toFriendlyError(err, t("errors.deleteStream")));
+    }
+  }
+
+  async function confirmDelete() {
+    const target = deleteTarget;
+    if (!target) return;
+    setDeleteTarget(null);
+    if (target.kind === "stream") {
+      await deleteStream(target.stream);
+    } else {
+      await deleteTimelineEntry(target.entry);
+    }
+  }
+
   async function addTimelineEntry() {
     if (!selectedStream || !entryDraft.title.trim()) return;
     await createTimelineEntry({
@@ -312,6 +354,21 @@ export function App() {
     }
   }
 
+  async function linkFileToEntry(entry: TimelineEntry) {
+    if (!root) return;
+    try {
+      const file = await adapter.chooseLocalFile();
+      const relative = (await adapter.relativePathForFile(root, file)) ?? file.name;
+      const linkedFile = linkedFileFromPath(relative, file.name, file.name.split(".").pop() || "file");
+      await updateTimelineEntry({
+        ...entry,
+        linkedFiles: [...entry.linkedFiles, linkedFile],
+      });
+    } catch (err) {
+      setError(toFriendlyError(err, t("errors.linkFile")));
+    }
+  }
+
   async function createWorkLog() {
     if (!selectedStream) return;
     const duration = workLogHours.trim() ? `\n${t("system.duration", { hours: workLogHours.trim() })}` : "";
@@ -423,7 +480,9 @@ export function App() {
               onAddEntry={addTimelineEntry}
               onPreviewFile={previewFile}
               onAttachNote={openEntryNoteDialog}
+              onAttachFile={linkFileToEntry}
               onUpdateEntry={updateTimelineEntry}
+              onDeleteEntry={(entry) => setDeleteTarget({ kind: "entry", entry })}
               onBackToDashboard={() => setSelectedId(undefined)}
             />
             {editStream ? (
@@ -440,6 +499,7 @@ export function App() {
                 onAddNote={openStreamNoteDialog}
                 onLinkFile={linkFile}
                 onOpenFile={previewFile}
+                onDelete={() => setDeleteTarget({ kind: "stream", stream: selectedStream })}
               />
             ) : null}
           </>
@@ -491,6 +551,16 @@ export function App() {
       />
       <SettingsDialog open={settingsOpen} onClose={() => setSettingsOpen(false)} />
       <FilePreviewDialog preview={filePreview} onClose={() => setFilePreview(null)} onSave={saveExistingNote} />
+      <ConfirmationDialog
+        open={Boolean(deleteTarget)}
+        title={deleteTarget?.kind === "stream" ? t("stream.delete") : t("timeline.delete")}
+        body={deleteTarget?.kind === "stream" ? t("stream.deleteBody") : t("timeline.deleteBody")}
+        detail={deleteTarget?.kind === "stream" ? deleteTarget.stream.title : deleteTarget?.entry.title}
+        cancelLabel={t("common.cancel")}
+        confirmLabel={t("common.delete")}
+        onCancel={() => setDeleteTarget(null)}
+        onConfirm={confirmDelete}
+      />
       {!streams.length ? (
         <div className="fixed inset-x-0 bottom-8 flex justify-center">
           <EmptyState title={t("stream.emptyTitle")} body={t("stream.emptyBody")} action={<Button onClick={() => setNewStreamOpen(true)}>{t("sidebar.new")}</Button>} />

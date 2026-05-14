@@ -58,4 +58,12 @@ export class StreamRepository {
     await this.store.write(`${this.directory}/${normalized.id}.json`, normalized);
     return normalized;
   }
+
+  async delete(streamId: string) {
+    try {
+      await this.adapter.removeFile(this.root, `${this.directory}/${streamId}.json`);
+    } catch (error) {
+      if (!(error instanceof DOMException) || error.name !== "NotFoundError") throw error;
+    }
+  }
 }

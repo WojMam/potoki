@@ -71,4 +71,19 @@ export class TimelineRepository {
     await this.save(streamId, next);
     return next;
   }
+
+  async deleteEntry(streamId: string, entryId: string) {
+    const { entries } = await this.load(streamId);
+    const next = entries.filter((item) => item.id !== entryId);
+    await this.save(streamId, next);
+    return next;
+  }
+
+  async deleteTimeline(streamId: string) {
+    try {
+      await this.adapter.removeFile(this.root, `${this.directory}/${streamId}.timeline.json`);
+    } catch (error) {
+      if (!(error instanceof DOMException) || error.name !== "NotFoundError") throw error;
+    }
+  }
 }

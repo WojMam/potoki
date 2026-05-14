@@ -11,9 +11,11 @@ type DialogProps = {
   children: React.ReactNode;
   onClose: () => void;
   className?: string;
+  contentClassName?: string;
+  scrollContent?: boolean;
 };
 
-export function Dialog({ open, title, children, onClose, className }: DialogProps) {
+export function Dialog({ open, title, children, onClose, className, contentClassName, scrollContent = true }: DialogProps) {
   const { t } = useI18n();
   React.useEffect(() => {
     if (!open) return;
@@ -23,6 +25,15 @@ export function Dialog({ open, title, children, onClose, className }: DialogProp
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [onClose, open]);
+
+  React.useEffect(() => {
+    if (!open) return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [open]);
 
   if (!open) return null;
   return (
@@ -35,15 +46,19 @@ export function Dialog({ open, title, children, onClose, className }: DialogProp
       }}
     >
       <div className={cn("flex max-h-[88vh] w-full max-w-2xl flex-col overflow-hidden rounded-xl border border-white/[0.07] bg-card/95 p-6 shadow-glow", className)}>
-        <div className="mb-4 flex items-center justify-between gap-4">
+        <div className="mb-4 flex shrink-0 items-center justify-between gap-4">
           <h2 className="text-lg font-semibold">{title}</h2>
           <Button type="button" size="icon" variant="ghost" onClick={onClose} aria-label={t("common.closeDialog")}>
             <X className="h-4 w-4" />
           </Button>
         </div>
-        <FlowScrollArea className="min-h-0 flex-1" viewportClassName="pr-3">
-          {children}
-        </FlowScrollArea>
+        {scrollContent ? (
+          <FlowScrollArea className={cn("min-h-0 flex-1", contentClassName)} viewportClassName="pr-3">
+            {children}
+          </FlowScrollArea>
+        ) : (
+          <div className={cn("min-h-0 flex-1", contentClassName)}>{children}</div>
+        )}
       </div>
     </div>
   );

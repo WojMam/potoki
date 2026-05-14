@@ -1,4 +1,4 @@
-import { ArrowLeft, FileText, NotebookPen, Pencil, PlusCircle } from "lucide-react";
+import { ArrowLeft, FilePlus2, FileText, NotebookPen, Pencil, PlusCircle, Trash2 } from "lucide-react";
 import { useEffect, useState, type KeyboardEvent } from "react";
 import { FlowScrollArea } from "../../components/layout/FlowScrollArea";
 import { Badge } from "../../components/ui/badge";
@@ -30,7 +30,9 @@ export function TimelinePanel({
   onAddEntry,
   onPreviewFile,
   onAttachNote,
+  onAttachFile,
   onUpdateEntry,
+  onDeleteEntry,
   onBackToDashboard,
 }: {
   stream: Workstream;
@@ -40,7 +42,9 @@ export function TimelinePanel({
   onAddEntry: () => void;
   onPreviewFile: (file: LinkedFile) => void;
   onAttachNote: (entry: TimelineEntry) => void;
+  onAttachFile: (entry: TimelineEntry) => void;
   onUpdateEntry: (entry: TimelineEntry) => void;
+  onDeleteEntry: (entry: TimelineEntry) => void;
   onBackToDashboard: () => void;
 }) {
   const { statusLabel, t, timelineTypeLabel } = useI18n();
@@ -169,14 +173,24 @@ export function TimelinePanel({
                         <div className="flex items-center gap-1.5">
                           <time className="text-[11px] text-muted-foreground/60">{formatDateTime(entry.createdAt)}</time>
                           {!editing ? (
-                            <button
-                              type="button"
-                              onClick={() => startEdit(entry)}
-                              className="rounded-md p-1 text-muted-foreground/44 opacity-0 transition duration-200 hover:bg-primary/[0.075] hover:text-primary-foreground group-hover:opacity-100 focus:opacity-100"
-                              aria-label={t("timeline.edit")}
-                            >
-                              <Pencil className="h-3.5 w-3.5" />
-                            </button>
+                            <>
+                              <button
+                                type="button"
+                                onClick={() => startEdit(entry)}
+                                className="rounded-md p-1 text-muted-foreground/44 opacity-0 transition duration-200 hover:bg-primary/[0.075] hover:text-primary-foreground group-hover:opacity-100 focus:opacity-100"
+                                aria-label={t("timeline.edit")}
+                              >
+                                <Pencil className="h-3.5 w-3.5" />
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => onDeleteEntry(entry)}
+                                className="rounded-md p-1 text-muted-foreground/36 opacity-0 transition duration-200 hover:bg-destructive/10 hover:text-destructive-foreground/86 group-hover:opacity-100 focus:opacity-100"
+                                aria-label={t("timeline.delete")}
+                              >
+                                <Trash2 className="h-3.5 w-3.5" />
+                              </button>
+                            </>
                           ) : null}
                         </div>
                       </div>
@@ -205,6 +219,10 @@ export function TimelinePanel({
                         <Button size="sm" variant="ghost" className="h-7 bg-transparent px-2 text-muted-foreground/76 hover:bg-primary/[0.055] hover:text-primary-foreground" onClick={() => onAttachNote(entry)}>
                           <NotebookPen className="h-3.5 w-3.5" />
                           {t("timeline.attachNote")}
+                        </Button>
+                        <Button size="sm" variant="ghost" className="h-7 bg-transparent px-2 text-muted-foreground/76 hover:bg-primary/[0.055] hover:text-primary-foreground" onClick={() => onAttachFile(entry)}>
+                          <FilePlus2 className="h-3.5 w-3.5" />
+                          {t("timeline.attachFile")}
                         </Button>
                         {entry.linkedFiles.map((file) => (
                           <Button key={file.path} size="sm" variant="ghost" className="h-7 bg-primary/[0.035] px-2 text-muted-foreground/86 hover:bg-primary/[0.075] hover:text-primary-foreground" onClick={() => onPreviewFile(file)}>

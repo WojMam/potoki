@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Check, FilePlus2, NotebookPen, Pencil, Plus, Save, Timer } from "lucide-react";
+import { Check, FilePlus2, NotebookPen, Pencil, Plus, Save, Timer, Trash2 } from "lucide-react";
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
 import { Select } from "../../components/ui/select";
@@ -21,6 +21,7 @@ export function StreamDetails({
   onAddNote,
   onLinkFile,
   onOpenFile,
+  onDelete,
 }: {
   stream: Workstream;
   edit: Workstream;
@@ -34,6 +35,7 @@ export function StreamDetails({
   onAddNote: () => void;
   onLinkFile: () => void;
   onOpenFile: (file: Workstream["linkedFiles"][number]) => void;
+  onDelete: () => void;
 }) {
   const { statusLabel, t } = useI18n();
   const [editing, setEditing] = useState(false);
@@ -147,6 +149,17 @@ export function StreamDetails({
           <Button variant="ghost" className="justify-start" onClick={onLinkFile}>
             <FilePlus2 className="h-4 w-4" />
             {t("context.linkFile")}
+          </Button>
+        </section>
+
+        <section className="pt-1">
+          <Button
+            variant="ghost"
+            className="h-8 justify-start px-2 text-xs text-muted-foreground/62 hover:bg-destructive/10 hover:text-destructive-foreground/86"
+            onClick={onDelete}
+          >
+            <Trash2 className="h-3.5 w-3.5" />
+            {t("stream.delete")}
           </Button>
         </section>
       </div>
