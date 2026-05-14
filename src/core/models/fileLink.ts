@@ -3,4 +3,5 @@ export type LinkedFile = {
   path: string;
   type: string;
   addedAt: string;
+  [key: string]: unknown;
 };

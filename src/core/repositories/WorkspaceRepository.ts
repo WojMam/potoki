@@ -1,5 +1,7 @@
 import type { DirectoryHandle, FileSystemAccessAdapter } from "../filesystem/FileSystemAccessAdapter";
 import { JsonFileStore } from "../filesystem/JsonFileStore";
+import { currentSchemaVersion } from "../data/defaults";
+import { normalizeWorkspace } from "../data/normalizers";
 import type { WorkspaceManifest } from "../models/workspace";
 import { nowIso } from "../utils/date";
 import { validateWorkspaceManifest } from "../utils/validation";
@@ -52,6 +54,7 @@ export class WorkspaceRepository {
   async initialize(name: string, withSampleData: boolean) {
     const timestamp = nowIso();
     const manifest: WorkspaceManifest = {
+      schemaVersion: currentSchemaVersion,
       name: name.trim() || "POTOKI",
       version: "1.0.0",
       createdAt: timestamp,
@@ -75,7 +78,7 @@ export class WorkspaceRepository {
   }
 
   async touch(manifest: WorkspaceManifest) {
-    const updated = { ...manifest, updatedAt: nowIso() };
+    const updated = normalizeWorkspace({ ...manifest, updatedAt: nowIso() });
     await this.store.write("workspace.json", updated);
     return updated;
   }

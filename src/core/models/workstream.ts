@@ -13,4 +13,5 @@ export type Workstream = {
   linkedFiles: LinkedFile[];
   createdAt: string;
   updatedAt: string;
+  [key: string]: unknown;
 };

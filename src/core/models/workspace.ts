@@ -1,4 +1,5 @@
 export type WorkspaceManifest = {
+  schemaVersion: number;
   name: string;
   version: string;
   createdAt: string;
@@ -9,4 +10,5 @@ export type WorkspaceManifest = {
     notes: string;
     artifacts: string;
   };
+  [key: string]: unknown;
 };

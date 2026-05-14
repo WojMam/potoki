@@ -1,0 +1,10 @@
+{
+  "id": "legacy-local-ai",
+  "title": "Legacy local AI context",
+  "description": "Older stream file without status or linked files.",
+  "currentContext": "The app should open this file and default missing fields safely.",
+  "nextActions": [
+    "Review local runtime constraints"
+  ],
+  "createdAt": "2026-05-10T08:15:00.000Z"
+}

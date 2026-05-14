@@ -1,5 +1,6 @@
 import type { DirectoryHandle, FileSystemAccessAdapter } from "../filesystem/FileSystemAccessAdapter";
 import { JsonFileStore } from "../filesystem/JsonFileStore";
+import { normalizeWorkstream } from "../data/normalizers";
 import type { Workstream } from "../models/workstream";
 import { nowIso } from "../utils/date";
 import { validateWorkstream } from "../utils/validation";
@@ -35,7 +36,8 @@ export class StreamRepository {
       const path = `${this.directory}/${file.name}`;
       try {
         const raw = await this.store.read(path);
-        const validation = validateWorkstream(raw);
+        const fallbackId = file.name.replace(/\.json$/i, "");
+        const validation = validateWorkstream(raw, fallbackId);
         if (validation.ok) streams.push(validation.value);
         else issues.push(`Invalid stream file ${path}: ${validation.errors.join(", ")}`);
       } catch (error) {
@@ -46,13 +48,14 @@ export class StreamRepository {
   }
 
   async save(stream: Workstream) {
-    const updated = { ...stream, updatedAt: nowIso() };
+    const updated = normalizeWorkstream({ ...stream, updatedAt: nowIso() }, stream.id);
     await this.store.write(`${this.directory}/${stream.id}.json`, updated);
     return updated;
   }
 
   async create(stream: Workstream) {
-    await this.store.write(`${this.directory}/${stream.id}.json`, stream);
-    return stream;
+    const normalized = normalizeWorkstream(stream, stream.id);
+    await this.store.write(`${this.directory}/${normalized.id}.json`, normalized);
+    return normalized;
   }
 }

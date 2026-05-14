@@ -1,0 +1,16 @@
+{
+  "id": "future-stream",
+  "title": "Future stream",
+  "description": "Contains fields from a future app version.",
+  "status": "waiting",
+  "currentContext": "Unknown fields should not break loading.",
+  "nextActions": [],
+  "linkedFiles": [],
+  "createdAt": "2026-05-10T08:15:00.000Z",
+  "updatedAt": "2026-05-12T10:00:00.000Z",
+  "color": "deep-water",
+  "pinned": true,
+  "customMetadata": {
+    "owner": "local"
+  }
+}

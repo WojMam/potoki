@@ -1,5 +1,6 @@
 import type { DirectoryHandle, FileSystemAccessAdapter } from "../filesystem/FileSystemAccessAdapter";
 import { JsonFileStore } from "../filesystem/JsonFileStore";
+import { isRecord, normalizeTimeline, normalizeTimelineEntry } from "../data/normalizers";
 import type { TimelineEntry } from "../models/timeline";
 import { validateTimeline } from "../utils/validation";
 
@@ -38,25 +39,35 @@ export class TimelineRepository {
   }
 
   async save(streamId: string, entries: TimelineEntry[]) {
+    const path = `${this.directory}/${streamId}.timeline.json`;
+    let existing: unknown = {};
+    try {
+      existing = await this.store.read(path);
+    } catch {
+      existing = {};
+    }
+    const normalized = normalizeTimeline({ ...(isRecord(existing) ? existing : {}), streamId, entries }, streamId);
     await this.store.write(
-      `${this.directory}/${streamId}.timeline.json`,
+      path,
       {
+        ...normalized,
         streamId,
-        entries: entries.sort((a, b) => b.createdAt.localeCompare(a.createdAt)),
+        entries: normalized.entries.sort((a, b) => b.createdAt.localeCompare(a.createdAt)),
       },
     );
   }
 
   async append(streamId: string, entry: TimelineEntry) {
     const { entries } = await this.load(streamId);
-    const next = [entry, ...entries];
+    const next = [normalizeTimelineEntry(entry, streamId), ...entries];
     await this.save(streamId, next);
     return next;
   }
 
   async update(streamId: string, entry: TimelineEntry) {
     const { entries } = await this.load(streamId);
-    const next = entries.map((item) => (item.id === entry.id ? entry : item));
+    const normalized = normalizeTimelineEntry(entry, streamId);
+    const next = entries.map((item) => (item.id === normalized.id ? normalized : item));
     await this.save(streamId, next);
     return next;
   }

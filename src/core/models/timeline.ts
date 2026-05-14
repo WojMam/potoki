@@ -19,9 +19,11 @@ export type TimelineEntry = {
   content: string;
   createdAt: string;
   linkedFiles: LinkedFile[];
+  [key: string]: unknown;
 };
 
 export type TimelineFile = {
   streamId: string;
   entries: TimelineEntry[];
+  [key: string]: unknown;
 };

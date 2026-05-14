@@ -169,7 +169,7 @@ export function App() {
     }
   }
 
-  async function createTimelineEntry(partial: Omit<TimelineEntry, "id" | "createdAt">) {
+  async function createTimelineEntry(partial: Pick<TimelineEntry, "streamId" | "type" | "title" | "content" | "linkedFiles">) {
     if (!repos || !manifest) return;
     try {
       const entry: TimelineEntry = { ...partial, id: createId("entry"), createdAt: nowIso() };
