@@ -1,22 +1,25 @@
-name: Deploy to GitHub Pages
+name: Build Release Package
 
 on:
   push:
-    branches:
-      - main
+    tags:
+      - "v*"
   workflow_dispatch:
+    inputs:
+      tag:
+        description: "Tag to create release for (for example: v1.0.0)"
+        required: true
+        type: string
+      release_name:
+        description: "Release title (optional)"
+        required: false
+        type: string
 
 permissions:
-  contents: read
-  pages: write
-  id-token: write
-
-concurrency:
-  group: pages
-  cancel-in-progress: true
+  contents: write
 
 jobs:
-  build:
+  release:
     runs-on: ubuntu-latest
 
     steps:
@@ -35,21 +38,47 @@ jobs:
       - name: Build
         run: npm run build
 
-      - name: Setup GitHub Pages
-        uses: actions/configure-pages@v5
+      - name: Resolve release metadata
+        id: metadata
+        run: |
+          APP_NAME="${GITHUB_REPOSITORY##*/}"
 
-      - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v3
+          if [[ "${GITHUB_REF_TYPE}" == "tag" ]]; then
+            TAG="${GITHUB_REF_NAME}"
+          else
+            TAG="${{ github.event.inputs.tag }}"
+          fi
+          if [[ -z "${TAG}" ]]; then
+            echo "Error: release tag is empty. Provide a tag in workflow_dispatch or run on a tag push."
+            exit 1
+          fi
+          SAFE_TAG="$(echo "${TAG}" | sed 's/[^A-Za-z0-9._-]/-/g')"
+
+          RELEASE_NAME="${{ github.event.inputs.release_name }}"
+          if [[ -z "${RELEASE_NAME}" ]]; then
+            RELEASE_NAME="Release ${TAG}"
+          fi
+
+          ZIP_NAME="${APP_NAME}-${SAFE_TAG}.zip"
+
+          echo "tag=${TAG}" >> "${GITHUB_OUTPUT}"
+          echo "release_name=${RELEASE_NAME}" >> "${GITHUB_OUTPUT}"
+          echo "zip_name=${ZIP_NAME}" >> "${GITHUB_OUTPUT}"
+
+      - name: Package dist directory
+        run: |
+          if [[ ! -d dist ]]; then
+            echo "Error: dist directory not found after build. Ensure the build script outputs files to dist/."
+            exit 1
+          fi
+          cd dist
+          zip -r "../${{ steps.metadata.outputs.zip_name }}" .
+
+      - name: Create release
+        uses: softprops/action-gh-release@v2
         with:
-          path: dist
-
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+          tag_name: ${{ steps.metadata.outputs.tag }}
+          name: ${{ steps.metadata.outputs.release_name }}
+          target_commitish: ${{ github.sha }}
+          files: ${{ steps.metadata.outputs.zip_name }}
+          generate_release_notes: true
