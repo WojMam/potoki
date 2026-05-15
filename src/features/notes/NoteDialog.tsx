@@ -1,5 +1,5 @@
 import ReactMarkdown from "react-markdown";
-import { useCallback, useEffect, useRef, useState, type TextareaHTMLAttributes } from "react";
+import { forwardRef, useCallback, useEffect, useRef, useState, type TextareaHTMLAttributes } from "react";
 import { FlowScrollArea } from "../../components/layout/FlowScrollArea";
 import { Button } from "../../components/ui/button";
 import { Dialog } from "../../components/ui/dialog";
@@ -7,6 +7,7 @@ import { Input } from "../../components/ui/input";
 import { Textarea } from "../../components/ui/textarea";
 import { cn } from "../../components/ui/utils";
 import { useI18n } from "../../core/i18n";
+import { MarkdownToolbar } from "./MarkdownToolbar";
 
 export function NoteDialog({
   open,
@@ -36,6 +37,8 @@ export function NoteDialog({
   onSave: () => void;
 }) {
   const { t } = useI18n();
+  const markdownTextareaRef = useRef<HTMLTextAreaElement | null>(null);
+
   return (
     <Dialog
       open={open}
@@ -54,11 +57,16 @@ export function NoteDialog({
         />
 
         <div className="grid min-h-0 flex-1 gap-4 lg:grid-cols-2">
-          <FlowTextarea
-            value={markdown}
-            onChange={(event) => setMarkdown(event.target.value)}
-            placeholder={t("notes.markdownPlaceholder")}
-          />
+          <div className="flex h-full min-h-0 flex-col overflow-hidden rounded-xl bg-white/[0.018]">
+            <MarkdownToolbar textareaRef={markdownTextareaRef} value={markdown} onChange={setMarkdown} />
+            <FlowTextarea
+              ref={markdownTextareaRef}
+              className="rounded-t-none border-t-0"
+              value={markdown}
+              onChange={(event) => setMarkdown(event.target.value)}
+              placeholder={t("notes.markdownPlaceholder")}
+            />
+          </div>
 
           <div className="h-full min-h-0 overflow-hidden rounded-xl bg-white/[0.018]">
             <FlowScrollArea className="h-full min-h-0" viewportClassName="p-5 pr-8">
@@ -115,10 +123,10 @@ export function NoteDialog({
   );
 }
 
-function FlowTextarea({
+const FlowTextarea = forwardRef<HTMLTextAreaElement, TextareaHTMLAttributes<HTMLTextAreaElement>>(function FlowTextarea({
   className,
   ...props
-}: TextareaHTMLAttributes<HTMLTextAreaElement>) {
+}, forwardedRef) {
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const trackRef = useRef<HTMLDivElement | null>(null);
   const nodeRef = useRef<HTMLDivElement | null>(null);
@@ -208,7 +216,14 @@ function FlowTextarea({
       data-flow-scrollable={scrollable ? "true" : "false"}
     >
       <Textarea
-        ref={textareaRef}
+        ref={(node) => {
+          textareaRef.current = node;
+          if (typeof forwardedRef === "function") {
+            forwardedRef(node);
+          } else if (forwardedRef) {
+            forwardedRef.current = node;
+          }
+        }}
         className={cn("scrollbar-none h-full min-h-0 overflow-y-auto pr-8 font-mono text-sm [resize:none]", className)}
         {...props}
       />
@@ -221,7 +236,7 @@ function FlowTextarea({
       </div>
     </div>
   );
-}
+});
 
 function clamp01(value: number) {
   if (!Number.isFinite(value)) return 0;
