@@ -28,6 +28,7 @@ Live app: [wojmam.github.io/potoki](https://wojmam.github.io/potoki/)
   - [Philosophy](#philosophy)
   - [Features](#features)
   - [Screenshots](#screenshots)
+  - [Documentation](#documentation)
   - [Running the App](#running-the-app)
     - [Hosted Static App](#hosted-static-app)
     - [Local Build](#local-build)
@@ -111,6 +112,18 @@ Screenshots are planned and will be added as the visual documentation matures.
 - Workspace picker
 
 </details>
+
+---
+
+## Documentation
+
+Project documentation lives in [`docs/`](docs/):
+
+- [Product Vision](docs/PRODUCT_VISION.md) - product philosophy, scope, and non-goals.
+- [Architecture](docs/ARCHITECTURE.md) - static app architecture and repository boundaries.
+- [File Formats](docs/FILE_FORMATS.md) - workspace, potok, timeline, note, and attachment formats.
+- [User Guide](docs/USER_GUIDE.md) - practical guide for opening workspaces, creating potoki, notes, and linked files.
+- [Data compatibility fixtures](docs/fixtures/data-compatibility/) - legacy JSON examples used to reason about schema compatibility.
 
 ---
 

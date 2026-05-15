@@ -26,6 +26,7 @@ Aplikacja online: [wojmam.github.io/potoki](https://wojmam.github.io/potoki/)
 - [Filozofia](#filozofia)
 - [Funkcje](#funkcje)
 - [Zrzuty ekranu](#zrzuty-ekranu)
+- [Dokumentacja](#dokumentacja)
 - [Uruchomienie](#uruchomienie)
 - [Joby projektu](#joby-projektu)
 - [Praca developerska](#praca-developerska)
@@ -107,6 +108,18 @@ Screenshoty są zaplanowane i zostaną dodane, gdy dokumentacja wizualna dojrzej
 - Wybór workspace
 
 </details>
+
+---
+
+## Dokumentacja
+
+Dokumentacja projektu znajduje się w [`docs/`](docs/):
+
+- [Product Vision](docs/PRODUCT_VISION.md) - filozofia produktu, zakres i rzeczy, którymi POTOKI nie próbują być.
+- [Architecture](docs/ARCHITECTURE.md) - architektura statycznej aplikacji i granice repozytoriów.
+- [File Formats](docs/FILE_FORMATS.md) - formaty workspace, potoków, timeline, notatek i dołączonych plików.
+- [User Guide](docs/USER_GUIDE.md) - praktyczny przewodnik po workspace, potokach, notatkach i plikach.
+- [Fixture'y kompatybilności danych](docs/fixtures/data-compatibility/) - przykłady starszych plików JSON do sprawdzania odporności schematu.
 
 ---
 
