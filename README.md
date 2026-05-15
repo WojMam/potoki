@@ -6,6 +6,7 @@
 
 [![Latest release](https://img.shields.io/github/v/release/WojMam/potoki?include_prereleases&label=release)](https://github.com/WojMam/potoki/releases)
 [![GitHub Pages](https://github.com/WojMam/potoki/actions/workflows/deploy-pages.yaml/badge.svg)](https://github.com/WojMam/potoki/actions/workflows/deploy-pages.yaml)
+[![Live Demo](https://img.shields.io/badge/demo-live-2ea043)](https://wojmam.github.io/potoki/)
 [![Version](https://img.shields.io/github/package-json/v/WojMam/potoki?label=version)](package.json)
 [![License](https://img.shields.io/github/license/WojMam/potoki)](LICENSE)
 [![Local-first](https://img.shields.io/badge/local--first-yes-2f7f8f)](#local-first-philosophy)
@@ -22,18 +23,22 @@ Live app: [wojmam.github.io/potoki](https://wojmam.github.io/potoki/)
 
 ## Contents
 
-- [What is POTOKI?](#what-is-potoki)
-- [Philosophy](#philosophy)
-- [Features](#features)
-- [Screenshots](#screenshots)
-- [Running the App](#running-the-app)
-- [Development](#development)
-- [Browser Requirement](#browser-requirement)
-- [Data Architecture](#data-architecture)
-- [Local-first Philosophy](#local-first-philosophy)
-- [Tech Stack](#tech-stack)
-- [Roadmap](#roadmap)
-- [License](#license)
+- [POTOKI](#potoki)
+  - [Contents](#contents)
+  - [What is POTOKI?](#what-is-potoki)
+  - [Philosophy](#philosophy)
+  - [Features](#features)
+  - [Screenshots](#screenshots)
+  - [Running the App](#running-the-app)
+    - [Hosted Static App](#hosted-static-app)
+    - [Local Build](#local-build)
+  - [Development](#development)
+  - [Browser Requirement](#browser-requirement)
+  - [Data Architecture](#data-architecture)
+  - [Local-first Philosophy](#local-first-philosophy)
+  - [Tech Stack](#tech-stack)
+  - [Roadmap](#roadmap)
+  - [License](#license)
 
 ---
 
