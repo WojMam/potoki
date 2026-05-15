@@ -258,6 +258,4 @@ Roadmapa jest celowo lekka. POTOKI powinny pozostać spokojne, lokalne i skoncen
 
 ## Licencja
 
-Informacje o licencji zostaną dodane tutaj.
-
-Dopóki w repozytorium nie ma pliku licencji, projekt należy traktować jako jeszcze nielicencjonowany do redystrybucji i ponownego użycia.
+POTOKI są udostępniane na licencji [MIT](LICENSE).

@@ -258,6 +258,4 @@ Roadmap items are intentionally lightweight. POTOKI should stay calm, local, and
 
 ## License
 
-License information will be added here.
-
-Until a license file is present, treat the project as not yet licensed for redistribution or reuse.
+POTOKI is released under the [MIT License](LICENSE).
