@@ -19,15 +19,6 @@
     },
     {
       "streamId": "local-ai-integration",
-      "type": "work_log",
-      "title": "Testowy wpis pracy",
-      "content": "Krótki test zapisu pracy w potoku.",
-      "linkedFiles": [],
-      "id": "entry-mp463yvl-ob3ru86",
-      "createdAt": "2026-05-13T14:41:36.081Z"
-    },
-    {
-      "streamId": "local-ai-integration",
       "type": "note",
       "title": "Notatka testowa",
       "content": "Utworzona i później poprawiona.",
