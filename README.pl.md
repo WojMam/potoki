@@ -7,6 +7,7 @@
 [![Najnowsze wydanie](https://img.shields.io/github/v/release/WojMam/potoki?include_prereleases&label=release)](https://github.com/WojMam/potoki/releases)
 [![GitHub Pages](https://github.com/WojMam/potoki/actions/workflows/deploy-pages.yaml/badge.svg)](https://github.com/WojMam/potoki/actions/workflows/deploy-pages.yaml)
 [![Wersja](https://img.shields.io/github/package-json/v/WojMam/potoki?label=version)](package.json)
+[![Licencja](https://img.shields.io/github/license/WojMam/potoki)](LICENSE)
 [![Local-first](https://img.shields.io/badge/local--first-tak-2f7f8f)](#filozofia-local-first)
 [![Offline-first](https://img.shields.io/badge/offline--first-tak-2f7f8f)](#filozofia-local-first)
 [![React + Vite + TypeScript](https://img.shields.io/badge/React%20%2B%20Vite%20%2B%20TypeScript-181f2a?logo=react)](#stos-technologiczny)

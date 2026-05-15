@@ -7,6 +7,7 @@
 [![Latest release](https://img.shields.io/github/v/release/WojMam/potoki?include_prereleases&label=release)](https://github.com/WojMam/potoki/releases)
 [![GitHub Pages](https://github.com/WojMam/potoki/actions/workflows/deploy-pages.yaml/badge.svg)](https://github.com/WojMam/potoki/actions/workflows/deploy-pages.yaml)
 [![Version](https://img.shields.io/github/package-json/v/WojMam/potoki?label=version)](package.json)
+[![License](https://img.shields.io/github/license/WojMam/potoki)](LICENSE)
 [![Local-first](https://img.shields.io/badge/local--first-yes-2f7f8f)](#local-first-philosophy)
 [![Offline-first](https://img.shields.io/badge/offline--first-yes-2f7f8f)](#local-first-philosophy)
 [![React + Vite + TypeScript](https://img.shields.io/badge/React%20%2B%20Vite%20%2B%20TypeScript-181f2a?logo=react)](#tech-stack)
