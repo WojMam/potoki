@@ -5,7 +5,7 @@
 > Spokojna lokalna przestrzeń do wracania do kontekstu, notatek, decyzji i równoległych nurtów pracy.
 
 [![Najnowsze wydanie](https://img.shields.io/github/v/release/WojMam/potoki?include_prereleases&label=release)](https://github.com/WojMam/potoki/releases)
-[![GitHub Pages](https://github.com/WojMam/potoki/actions/workflows/deploy-pages.yaml/badge.svg)](https://github.com/WojMam/potoki/actions/workflows/deploy-pages.yaml)
+[![Demo](https://img.shields.io/badge/demo-live-2ea043)](https://wojmam.github.io/potoki/)
 [![Wersja](https://img.shields.io/github/package-json/v/WojMam/potoki?label=version)](package.json)
 [![Licencja](https://img.shields.io/github/license/WojMam/potoki)](LICENSE)
 [![Local-first](https://img.shields.io/badge/local--first-tak-2f7f8f)](#filozofia-local-first)
@@ -27,6 +27,7 @@ Aplikacja online: [wojmam.github.io/potoki](https://wojmam.github.io/potoki/)
 - [Funkcje](#funkcje)
 - [Zrzuty ekranu](#zrzuty-ekranu)
 - [Uruchomienie](#uruchomienie)
+- [Joby projektu](#joby-projektu)
 - [Praca developerska](#praca-developerska)
 - [Wymagania przeglądarki](#wymagania-przeglądarki)
 - [Architektura Danych](#architektura-danych)
@@ -134,6 +135,16 @@ dist/
 ```
 
 Możesz skopiować ten plik na inną maszynę i otworzyć go w Chrome albo Edge.
+
+---
+
+## Joby projektu
+
+[![Deploy to GitHub Pages](https://github.com/WojMam/potoki/actions/workflows/deploy-pages.yaml/badge.svg)](https://github.com/WojMam/potoki/actions/workflows/deploy-pages.yaml)
+[![Build Release Package](https://github.com/WojMam/potoki/actions/workflows/release-package.yaml/badge.svg)](https://github.com/WojMam/potoki/actions/workflows/release-package.yaml)
+
+- **Deploy to GitHub Pages** buduje statyczną aplikację i publikuje ją pod adresem [wojmam.github.io/potoki](https://wojmam.github.io/potoki/).
+- **Build Release Package** buduje aplikację i pakuje statyczny output do wydań GitHub.
 
 ---
 

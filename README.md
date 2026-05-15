@@ -5,7 +5,6 @@
 > A calm local workspace for returning to context, notes, decisions, and parallel work currents.
 
 [![Latest release](https://img.shields.io/github/v/release/WojMam/potoki?include_prereleases&label=release)](https://github.com/WojMam/potoki/releases)
-[![GitHub Pages](https://github.com/WojMam/potoki/actions/workflows/deploy-pages.yaml/badge.svg)](https://github.com/WojMam/potoki/actions/workflows/deploy-pages.yaml)
 [![Live Demo](https://img.shields.io/badge/demo-live-2ea043)](https://wojmam.github.io/potoki/)
 [![Version](https://img.shields.io/github/package-json/v/WojMam/potoki?label=version)](package.json)
 [![License](https://img.shields.io/github/license/WojMam/potoki)](LICENSE)
@@ -32,6 +31,7 @@ Live app: [wojmam.github.io/potoki](https://wojmam.github.io/potoki/)
   - [Running the App](#running-the-app)
     - [Hosted Static App](#hosted-static-app)
     - [Local Build](#local-build)
+  - [Project Jobs](#project-jobs)
   - [Development](#development)
   - [Browser Requirement](#browser-requirement)
   - [Data Architecture](#data-architecture)
@@ -139,6 +139,16 @@ dist/
 ```
 
 You can copy this file to another machine and open it in Chrome or Edge.
+
+---
+
+## Project Jobs
+
+[![Deploy to GitHub Pages](https://github.com/WojMam/potoki/actions/workflows/deploy-pages.yaml/badge.svg)](https://github.com/WojMam/potoki/actions/workflows/deploy-pages.yaml)
+[![Build Release Package](https://github.com/WojMam/potoki/actions/workflows/release-package.yaml/badge.svg)](https://github.com/WojMam/potoki/actions/workflows/release-package.yaml)
+
+- **Deploy to GitHub Pages** builds the static app and publishes it to [wojmam.github.io/potoki](https://wojmam.github.io/potoki/).
+- **Build Release Package** builds the app and packages the static output for GitHub releases.
 
 ---
 
