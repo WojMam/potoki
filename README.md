@@ -119,6 +119,7 @@ Screenshots are planned and will be added as the visual documentation matures.
 
 Project documentation lives in [`docs/`](docs/):
 
+- [AI documentation layer](docs/ai/START_HERE.md) - compact onboarding and operating notes for AI coding assistants.
 - [Product Vision](docs/PRODUCT_VISION.md) - product philosophy, scope, and non-goals.
 - [Architecture](docs/ARCHITECTURE.md) - static app architecture and repository boundaries.
 - [File Formats](docs/FILE_FORMATS.md) - workspace, potok, timeline, note, and attachment formats.

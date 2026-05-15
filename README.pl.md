@@ -115,6 +115,7 @@ Screenshoty są zaplanowane i zostaną dodane, gdy dokumentacja wizualna dojrzej
 
 Dokumentacja projektu znajduje się w [`docs/`](docs/):
 
+- [Warstwa dokumentacji dla AI](docs/ai/START_HERE.md) - kompaktowy onboarding i zasady pracy dla asystentów kodujących.
 - [Product Vision](docs/PRODUCT_VISION.md) - filozofia produktu, zakres i rzeczy, którymi POTOKI nie próbują być.
 - [Architecture](docs/ARCHITECTURE.md) - architektura statycznej aplikacji i granice repozytoriów.
 - [File Formats](docs/FILE_FORMATS.md) - formaty workspace, potoków, timeline, notatek i dołączonych plików.
