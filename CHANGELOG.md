@@ -7,6 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.1] - 2026-05-19
+
+### Added
+
+- **Faster workspace saves** — note dialog closes immediately; timeline updates write from in-memory state without re-reading JSON; parallel stream/timeline writes where safe.
+- **Directory handle cache** for File System Access API paths during a workspace session.
+
+### Fixed
+
+- **Release notes** — workflow reads the matching `CHANGELOG.md` section for `package.json` version (with `[Unreleased]` fallback).
+- Redundant `workspace.json` touches and post-save note re-read removed from common save paths.
+
+### Changed
+
+- Ambient background uses static depth layers with horizontal wave drift only (no shifting color blobs).
+- `Build Release Package` workflow: optional `changelog` input; version defaults from `package.json`.
+
 ## [0.1.0] - 2026-05-18
 
 ### Added

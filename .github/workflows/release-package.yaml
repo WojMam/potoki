@@ -79,10 +79,9 @@ jobs:
 
           ZIP_NAME="${APP_NAME}-${SAFE_TAG}.zip"
 
-          if [[ -n "${CHANGELOG_INPUT}" ]]; then
-            RELEASE_BODY="${CHANGELOG_INPUT}"
-          elif [[ -f CHANGELOG.md ]]; then
-            RELEASE_BODY="$(awk -v ver="${VERSION}" '
+          extract_changelog_section() {
+            local section_version="$1"
+            awk -v ver="${section_version}" '
               /^## \[/ {
                 if (found) exit
                 if ($0 ~ "\\[" ver "\\]") found=1
@@ -90,11 +89,24 @@ jobs:
               }
               found && /^## / { exit }
               found { print }
-            ' CHANGELOG.md | sed '/^[[:space:]]*$/d')"
+            ' CHANGELOG.md | sed '/^[[:space:]]*$/d'
+          }
+
+          if [[ -n "${CHANGELOG_INPUT}" ]]; then
+            RELEASE_BODY="${CHANGELOG_INPUT}"
+          elif [[ -f CHANGELOG.md ]]; then
+            RELEASE_BODY="$(extract_changelog_section "${VERSION}")"
+            if [[ -z "${RELEASE_BODY}" && "${VERSION}" != "Unreleased" ]]; then
+              RELEASE_BODY="$(extract_changelog_section "Unreleased")"
+              if [[ -n "${RELEASE_BODY}" ]]; then
+                echo "::warning::No ## [${VERSION}] section in CHANGELOG.md — release body uses [Unreleased]. Add ## [${VERSION}] before publishing."
+              fi
+            fi
           fi
 
           if [[ -z "${RELEASE_BODY}" ]]; then
-            RELEASE_BODY="See [CHANGELOG.md](CHANGELOG.md) for release notes."
+            echo "::error::No release notes. Add ## [${VERSION}] (or [Unreleased]) to CHANGELOG.md, or pass the changelog workflow input."
+            RELEASE_BODY="Release ${TAG}. Update CHANGELOG.md with a ## [${VERSION}] section for detailed notes."
           fi
 
           {
