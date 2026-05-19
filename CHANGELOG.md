@@ -7,9 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.3] - 2026-05-19
+
 ### Added
 
-- **Timeline entry attachments** — unlink non-Markdown files from an entry while editing; remove a Markdown note from an entry while editing its preview (file deleted only when no other references remain).
+- **Timeline entry attachments** — unlink non-Markdown files from a timeline entry while editing; remove a Markdown note from an entry while editing its preview (the `.md` file is deleted only when it is not linked elsewhere in the workspace).
 
 ## [0.1.2] - 2026-05-19
 
