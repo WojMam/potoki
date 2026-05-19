@@ -165,7 +165,7 @@ You can copy this file to another machine and open it in Chrome or Edge.
 [![Build Release Package](https://github.com/WojMam/potoki/actions/workflows/release-package.yaml/badge.svg)](https://github.com/WojMam/potoki/actions/workflows/release-package.yaml)
 
 - **Deploy to GitHub Pages** builds the static app and publishes it to [wojmam.github.io/potoki](https://wojmam.github.io/potoki/).
-- **E2E Playwright** runs the Playwright suite on every push and pull request to `main`. Open the [latest workflow run](https://github.com/WojMam/potoki/actions/workflows/e2e-playwright.yml) for logs, the job **Summary**, and a downloadable HTML report artifact. On `main`, **Publish Playwright report** also deploys the latest report to [wojmam.github.io/potoki/playwright-report/](https://wojmam.github.io/potoki/playwright-report/).
+- **E2E Playwright** runs the Playwright suite on every push and pull request to the default branch (`main` or `master`). Open the [latest workflow run](https://github.com/WojMam/potoki/actions/workflows/e2e-playwright.yml) for logs, the job **Summary**, and a downloadable HTML report artifact. **Publish Playwright report** deploys the HTML report to [wojmam.github.io/potoki/playwright-report/](https://wojmam.github.io/potoki/playwright-report/) after E2E on the default branch, or manually via **Run workflow** (uses the latest completed E2E run on the default branch if you do not pass a run ID).
 - **Build Release Package** builds the app and packages the static output for GitHub releases.
 
 ---

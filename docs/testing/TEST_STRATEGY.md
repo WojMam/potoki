@@ -100,13 +100,15 @@ Brak etykiety → najpierw poprawka UI (`aria-label`), potem test.
 
 Workflow: [`.github/workflows/e2e-playwright.yml`](../../.github/workflows/e2e-playwright.yml)
 
-- Uruchamianie: push i pull request do `main`, oraz `workflow_dispatch`.
+- Uruchamianie: push i pull request do gałęzi domyślnej (`main` lub `master`), oraz `workflow_dispatch`.
 - Kroki: `npm ci` → `npx playwright install --with-deps chromium` → `npm run test:e2e` (`CI=true`).
 - Raport HTML: artefakt `playwright-report` (30 dni) na stronie runu.
-- **Summary** joba: link do runu, artefaktu i (na `main`) hostowanego raportu.
+- **Summary** joba: link do runu, artefaktu i (na gałęzi domyślnej) hostowanego raportu.
 - Anotacje w PR: reporter `github` włączony przy `CI=true`.
 
-Publikacja hostowanego raportu (tylko `main`): [`.github/workflows/publish-playwright-report.yml`](../../.github/workflows/publish-playwright-report.yml) — po zakończeniu E2E buduje aplikację, dokleja raport do `dist/playwright-report/` i deployuje Pages. URL: [wojmam.github.io/potoki/playwright-report/](https://wojmam.github.io/potoki/playwright-report/).
+Publikacja hostowanego raportu (gałąź domyślna, np. `master`): [`.github/workflows/publish-playwright-report.yml`](../../.github/workflows/publish-playwright-report.yml) — automatycznie po E2E na gałęzi domyślnej, albo ręcznie (**Actions → Publish Playwright report → Run workflow**; opcjonalnie podaj `e2e_run_id`, inaczej ostatni zakończony run E2E na gałęzi domyślnej). URL: [wojmam.github.io/potoki/playwright-report/](https://wojmam.github.io/potoki/playwright-report/).
+
+Uwaga: automatyczny `workflow_run` wymaga, by oba workflow były na gałęzi domyślnej repozytorium. Run E2E z PR nie uruchamia publish. Jeśli domyślna gałąź to `master`, a workflow nasłuchuje tylko `main`, publish się nie włączy — w repo są skonfigurowane obie nazwy oraz `default_branch` z API.
 
 Lokalnie: `npm install` → `npx playwright install chromium` → `npm run test:e2e`.
 

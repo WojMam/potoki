@@ -8,6 +8,13 @@ on:
       - completed
     branches:
       - main
+      - master
+  workflow_dispatch:
+    inputs:
+      e2e_run_id:
+        description: "E2E Playwright run ID (empty = latest completed run on default branch)"
+        required: false
+        type: string
 
 permissions:
   contents: read
@@ -21,7 +28,9 @@ concurrency:
 
 jobs:
   publish:
-    if: ${{ github.event.workflow_run.conclusion != 'cancelled' }}
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion != 'cancelled')
     runs-on: ubuntu-latest
     environment:
       name: github-pages
@@ -30,6 +39,50 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Resolve E2E run ID
+        id: e2e-run
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+            let runId;
+
+            if (context.eventName === 'workflow_run') {
+              runId = context.payload.workflow_run.id;
+            } else {
+              const input = String('${{ inputs.e2e_run_id }}' || '').trim();
+              if (input) {
+                runId = Number(input);
+                if (!Number.isFinite(runId)) {
+                  core.setFailed(`Invalid e2e_run_id: ${input}`);
+                  return;
+                }
+              } else {
+                const { data: repository } = await github.rest.repos.get({ owner, repo });
+                const defaultBranch = repository.default_branch;
+                const { data } = await github.rest.actions.listWorkflowRuns({
+                  owner,
+                  repo,
+                  workflow_id: 'e2e-playwright.yml',
+                  branch: defaultBranch,
+                  status: 'completed',
+                  per_page: 20,
+                });
+                const run = data.workflow_runs.find(
+                  (item) => item.conclusion === 'success' || item.conclusion === 'failure',
+                );
+                if (!run) {
+                  core.setFailed(
+                    `No completed E2E Playwright run found on ${defaultBranch}. Run E2E Playwright first.`,
+                  );
+                  return;
+                }
+                runId = run.id;
+              }
+            }
+
+            core.setOutput('run_id', String(runId));
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -44,7 +97,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          run-id: ${{ github.event.workflow_run.id }}
+          run-id: ${{ steps.e2e-run.outputs.run_id }}
           name: playwright-report
           path: playwright-report
 
@@ -67,11 +120,18 @@ jobs:
         uses: actions/deploy-pages@v4
 
       - name: Job summary
+        env:
+          E2E_RUN_ID: ${{ steps.e2e-run.outputs.run_id }}
+          E2E_RUN_URL: ${{ github.event.workflow_run.html_url }}
         run: |
           {
             echo "## Playwright report published"
             echo ""
             echo "Hosted report: [https://wojmam.github.io/potoki/playwright-report/](https://wojmam.github.io/potoki/playwright-report/)"
             echo ""
-            echo "Source E2E run: [workflow run](${{ github.event.workflow_run.html_url }}) (${{ github.event.workflow_run.conclusion }})"
+            if [ -n "${E2E_RUN_URL}" ]; then
+              echo "Source E2E run: [workflow run](${E2E_RUN_URL})"
+            else
+              echo "Source E2E run ID: \`${E2E_RUN_ID}\` ([open in Actions](${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${E2E_RUN_ID}))"
+            fi
           } >> "${GITHUB_STEP_SUMMARY}"

@@ -161,7 +161,7 @@ Możesz skopiować ten plik na inną maszynę i otworzyć go w Chrome albo Edge.
 [![Build Release Package](https://github.com/WojMam/potoki/actions/workflows/release-package.yaml/badge.svg)](https://github.com/WojMam/potoki/actions/workflows/release-package.yaml)
 
 - **Deploy to GitHub Pages** buduje statyczną aplikację i publikuje ją pod adresem [wojmam.github.io/potoki](https://wojmam.github.io/potoki/).
-- **E2E Playwright** uruchamia testy Playwright przy każdym pushu i pull requeście do `main`. W [ostatnim runie workflow](https://github.com/WojMam/potoki/actions/workflows/e2e-playwright.yml) są logi, **Summary** oraz artefakt z raportem HTML. Na gałęzi `main` workflow **Publish Playwright report** publikuje też raport pod [wojmam.github.io/potoki/playwright-report/](https://wojmam.github.io/potoki/playwright-report/).
+- **E2E Playwright** uruchamia testy Playwright przy każdym pushu i pull requeście do gałęzi domyślnej (`main` lub `master`). W [ostatnim runie workflow](https://github.com/WojMam/potoki/actions/workflows/e2e-playwright.yml) są logi, **Summary** oraz artefakt z raportem HTML. **Publish Playwright report** publikuje raport HTML pod [wojmam.github.io/potoki/playwright-report/](https://wojmam.github.io/potoki/playwright-report/) po E2E na gałęzi domyślnej albo ręcznie (**Run workflow** — bez podania ID używa ostatniego zakończonego runu E2E na gałęzi domyślnej).
 - **Build Release Package** buduje aplikację i pakuje statyczny output do wydań GitHub.
 
 ---
