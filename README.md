@@ -36,6 +36,7 @@ Live app: [wojmam.github.io/potoki](https://wojmam.github.io/potoki/)
     - [Local Build](#local-build)
   - [Project Jobs](#project-jobs)
   - [Development](#development)
+  - [Testing](#testing)
   - [Browser Requirement](#browser-requirement)
   - [Data Architecture](#data-architecture)
   - [Local-first Philosophy](#local-first-philosophy)
@@ -127,6 +128,7 @@ Project documentation lives in [`docs/`](docs/):
 - [File Formats](docs/FILE_FORMATS.md) - workspace, potok, timeline, note, and attachment formats.
 - [User Guide](docs/USER_GUIDE.md) - practical guide for opening workspaces, creating potoki, notes, and linked files.
 - [Data compatibility fixtures](docs/fixtures/data-compatibility/) - legacy JSON examples used to reason about schema compatibility.
+- [E2E test strategy](docs/testing/TEST_STRATEGY.md) - scope, priorities, fixtures, CI, and conventions for Playwright tests.
 
 ---
 
@@ -202,17 +204,57 @@ Preview production build:
 npm run preview
 ```
 
-### E2E tests (Playwright)
+E2E tests: see [Testing](#testing).
+
+Production output is intentionally static and self-contained. The current build process emits a single `dist/index.html` file so the app can be copied and opened directly in a supported browser.
+
+---
+
+## Testing
+
+POTOKI uses **Playwright** end-to-end tests against the Vite dev server. They protect critical user flows (workspace, potoki, timeline, Markdown notes, settings, legacy data) without a backend.
+
+Full strategy, scope, and conventions: **[docs/testing/TEST_STRATEGY.md](docs/testing/TEST_STRATEGY.md)** (Polish; this section is the English quick reference).
+
+### Prerequisites
+
+Chromium only (same as the app). One-time browser install:
 
 ```bash
 npx playwright install chromium
-npm run test:e2e
-npm run test:e2e:report   # open the last local HTML report
 ```
 
-Strategy and scope: [docs/testing/TEST_STRATEGY.md](docs/testing/TEST_STRATEGY.md).
+### Run locally
 
-Production output is intentionally static and self-contained. The current build process emits a single `dist/index.html` file so the app can be copied and opened directly in a supported browser.
+| Command | Purpose |
+|---------|---------|
+| `npm run test:e2e` | Run all specs headless; patches the HTML report for readable contrast |
+| `npm run test:e2e:ui` | Playwright UI mode |
+| `npm run test:e2e:headed` | Visible browser window |
+| `npm run test:e2e:debug` | Debug a failing test |
+| `npm run test:e2e:report` | Open the last `playwright-report/` in the browser |
+
+The dev server starts automatically via `playwright.config.ts` (`npm run dev` on `http://localhost:5173`).
+
+### What is covered
+
+- **Smoke** — app start, landing, sample workspace, dashboard, open a potok.
+- **Critical** — timeline entries, Markdown notes, language settings (PL/EN).
+- **Regression** — Markdown toolbar, legacy workspace JSON compatibility.
+
+Specs live under [`tests/e2e/`](tests/e2e/). File System Access API is **mocked in memory** ([`tests/utils/mockFileSystem.ts`](tests/utils/mockFileSystem.ts)); fixture workspaces are in [`tests/fixtures/workspaces/`](tests/fixtures/workspaces/). Before a release, a short **manual check in real Chrome** with a local folder is still recommended.
+
+Unit tests (e.g. JSON normalizers) are not part of this suite yet — see the strategy doc.
+
+### CI and reports
+
+| Resource | Link |
+|----------|------|
+| E2E workflow (every push/PR to default branch) | [e2e-playwright.yml](https://github.com/WojMam/potoki/actions/workflows/e2e-playwright.yml) |
+| HTML report artifact | **Artifacts** → `playwright-report` on the workflow run |
+| Hosted HTML report (default branch) | [wojmam.github.io/potoki/playwright-report/](https://wojmam.github.io/potoki/playwright-report/) |
+
+The hosted report is published by **Publish Playwright report** after E2E on the default branch, or manually from Actions. Hosted pages apply a light-theme patch so rows stay readable in system dark mode ([`tests/scripts/patch-playwright-report.mjs`](tests/scripts/patch-playwright-report.mjs)).
 
 ---
 

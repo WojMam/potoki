@@ -32,6 +32,7 @@ Aplikacja online: [wojmam.github.io/potoki](https://wojmam.github.io/potoki/)
 - [Uruchomienie](#uruchomienie)
 - [Joby projektu](#joby-projektu)
 - [Praca developerska](#praca-developerska)
+- [Testy](#testy)
 - [Wymagania przeglądarki](#wymagania-przeglądarki)
 - [Architektura Danych](#architektura-danych)
 - [Filozofia Local-first](#filozofia-local-first)
@@ -123,6 +124,7 @@ Dokumentacja projektu znajduje się w [`docs/`](docs/):
 - [File Formats](docs/FILE_FORMATS.md) - formaty workspace, potoków, timeline, notatek i dołączonych plików.
 - [User Guide](docs/USER_GUIDE.md) - praktyczny przewodnik po workspace, potokach, notatkach i plikach.
 - [Fixture'y kompatybilności danych](docs/fixtures/data-compatibility/) - przykłady starszych plików JSON do sprawdzania odporności schematu.
+- [Strategia testów E2E](docs/testing/TEST_STRATEGY.md) - zakres, priorytety, fixture'y, CI i konwencje Playwright.
 
 ---
 
@@ -198,17 +200,57 @@ Podgląd produkcyjnego buildu:
 npm run preview
 ```
 
-### Testy E2E (Playwright)
+Testy E2E: sekcja [Testy](#testy).
+
+Output produkcyjny jest celowo statyczny i samowystarczalny. Obecny build tworzy pojedynczy plik `dist/index.html`, który można skopiować i otworzyć bez lokalnego serwera.
+
+---
+
+## Testy
+
+POTOKI mają testy **E2E w Playwright** uruchamiane na serwerze deweloperskim Vite. Chronią krytyczne ścieżki (workspace, potoki, timeline, notatki Markdown, ustawienia, starsze dane) bez backendu.
+
+Pełna strategia, zakres i konwencje: **[docs/testing/TEST_STRATEGY.md](docs/testing/TEST_STRATEGY.md)**.
+
+### Wymagania
+
+Tylko Chromium (jak aplikacja). Jednorazowa instalacja przeglądarki:
 
 ```bash
 npx playwright install chromium
-npm run test:e2e
-npm run test:e2e:report   # ostatni lokalny raport HTML
 ```
 
-Strategia i zakres: [docs/testing/TEST_STRATEGY.md](docs/testing/TEST_STRATEGY.md).
+### Uruchomienie lokalne
 
-Output produkcyjny jest celowo statyczny i samowystarczalny. Obecny build tworzy pojedynczy plik `dist/index.html`, który można skopiować i otworzyć bez lokalnego serwera.
+| Polecenie | Opis |
+|-----------|------|
+| `npm run test:e2e` | Wszystkie specy headless; po teście łata raport HTML (czytelny kontrast) |
+| `npm run test:e2e:ui` | Tryb UI Playwright |
+| `npm run test:e2e:headed` | Z widocznym oknem przeglądarki |
+| `npm run test:e2e:debug` | Debugowanie |
+| `npm run test:e2e:report` | Otwarcie ostatniego `playwright-report/` |
+
+Serwer dev startuje automatycznie (`playwright.config.ts`, `npm run dev`, `http://localhost:5173`).
+
+### Zakres
+
+- **Smoke** — start, landing, przykładowy workspace, dashboard, wejście w potok.
+- **Critical** — wpisy na timeline, notatki Markdown, język PL/EN.
+- **Regression** — toolbar Markdown, kompatybilność ze starym JSON workspace.
+
+Specy: [`tests/e2e/`](tests/e2e/). **File System Access API** jest mockowane w pamięci ([`tests/utils/mockFileSystem.ts`](tests/utils/mockFileSystem.ts)); fixture'y: [`tests/fixtures/workspaces/`](tests/fixtures/workspaces/). Przed releasem warto zrobić krótki **ręczny smoke w Chrome** na prawdziwym folderze.
+
+Testów jednostkowych (np. normalizatory JSON) w tym zestawie jeszcze nie ma — patrz dokument strategii.
+
+### CI i raporty
+
+| Zasób | Link |
+|-------|------|
+| Workflow E2E (push/PR do gałęzi domyślnej) | [e2e-playwright.yml](https://github.com/WojMam/potoki/actions/workflows/e2e-playwright.yml) |
+| Artefakt raportu HTML | **Artifacts** → `playwright-report` na stronie runu |
+| Hostowany raport HTML (gałąź domyślna) | [wojmam.github.io/potoki/playwright-report/](https://wojmam.github.io/potoki/playwright-report/) |
+
+Publikacja hostowanego raportu: workflow **Publish Playwright report** po E2E na gałęzi domyślnej albo ręcznie z Actions. Na Pages stosowany jest patch jasnego motywu ([`tests/scripts/patch-playwright-report.mjs`](tests/scripts/patch-playwright-report.mjs)), żeby wiersze testów były czytelne przy ciemnym motywie systemu.
 
 ---
 

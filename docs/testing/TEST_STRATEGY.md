@@ -1,5 +1,7 @@
 # POTOKI — strategia testów E2E
 
+Skrót w README: [Testing (EN)](../../README.md#testing) · [Testy (PL)](../../README.pl.md#testy).
+
 ## Cel
 
 Chronić krytyczne ścieżki użytkownika w local-first aplikacji: otwarcie workspace, nawigacja, wpisy na osi czasu, notatki Markdown, ustawienia języka i otwarcie starszych plików danych.
@@ -62,6 +64,8 @@ tests/
     mockFileSystem.ts
     testWorkspace.ts
     selectors.ts
+  scripts/
+    patch-playwright-report.mjs
 playwright.config.ts
 docs/testing/TEST_STRATEGY.md
 ```
@@ -116,8 +120,10 @@ Lokalnie: `npm install` → `npx playwright install chromium` → `npm run test:
 
 | Skrypt | Opis |
 |--------|------|
-| `npm run test:e2e` | headless, wszystkie specy |
+| `npm run test:e2e` | headless, wszystkie specy; na końcu uruchamia `patch-playwright-report.mjs` |
 | `npm run test:e2e:ui` | UI mode |
 | `npm run test:e2e:headed` | z oknem przeglądarki |
 | `npm run test:e2e:debug` | debug |
-| `npm run test:e2e:report` | raport HTML po runie |
+| `npm run test:e2e:report` | otwiera ostatni `playwright-report/` (`playwright show-report`) |
+
+Po samym `playwright test` (bez npm) raport może mieć słaby kontrast w dark mode — uruchom: `node tests/scripts/patch-playwright-report.mjs`.

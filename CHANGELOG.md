@@ -7,14 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.2] - 2026-05-19
+
 ### Added
 
-- **E2E Playwright** — GitHub Actions workflow, HTML report artifact, job summary, and hosted report at `/playwright-report/` on GitHub Pages after runs on `main`.
-- **Playwright test suite** — smoke, streams, notes, markdown toolbar, settings, and data-compatibility specs with in-memory File System Access mock ([`docs/testing/TEST_STRATEGY.md`](docs/testing/TEST_STRATEGY.md)).
+- **E2E testing (Playwright)** — Chromium-based end-to-end suite with in-memory File System Access API mock, fixture workspaces, and shared helpers (`tests/e2e/`, `tests/utils/`). Covers smoke flows, streams, notes, markdown toolbar, settings, and legacy data compatibility ([`docs/testing/TEST_STRATEGY.md`](docs/testing/TEST_STRATEGY.md)).
+- **npm scripts** — `test:e2e`, `test:e2e:ui`, `test:e2e:headed`, `test:e2e:debug`, `test:e2e:report`.
+- **CI** — GitHub Actions workflow runs E2E on push/PR to `main` and `master`; uploads HTML report artifact and job summary.
+- **Hosted test report** — publish workflow deploys the Playwright HTML report to GitHub Pages at `/playwright-report/` (automatic after E2E on the default branch, or manual via workflow dispatch).
+
+### Changed
+
+- **Accessibility for tests** — `aria-label` on workspace name, timeline entries, and the markdown editor (PL/EN) for stable selectors without changing product behavior.
 
 ### Fixed
 
-- **Hosted Playwright HTML report** — force light theme so test rows stay readable when the system or browser prefers dark mode.
+- **Hosted Playwright HTML report contrast** — post-process patch forces a light theme so test rows stay readable when the OS or browser prefers dark mode.
 
 ## [0.1.1] - 2026-05-19
 
