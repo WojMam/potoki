@@ -106,9 +106,9 @@ Workflow: [`.github/workflows/e2e-playwright.yml`](../../.github/workflows/e2e-p
 - **Summary** joba: link do runu, artefaktu i (na gałęzi domyślnej) hostowanego raportu.
 - Anotacje w PR: reporter `github` włączony przy `CI=true`.
 
-Publikacja hostowanego raportu (gałąź domyślna, np. `master`): [`.github/workflows/publish-playwright-report.yml`](../../.github/workflows/publish-playwright-report.yml) — automatycznie po E2E na gałęzi domyślnej, albo ręcznie (**Actions → Publish Playwright report → Run workflow**; opcjonalnie podaj `e2e_run_id`, inaczej ostatni zakończony run E2E na gałęzi domyślnej). URL: [wojmam.github.io/potoki/playwright-report/](https://wojmam.github.io/potoki/playwright-report/).
+Publikacja hostowanego raportu (gałąź domyślna, np. `master`): [`.github/workflows/publish-playwright-report.yml`](../../.github/workflows/publish-playwright-report.yml) — automatycznie po E2E na gałęzi domyślnej, albo ręcznie (**Actions → Publish Playwright report → Run workflow**; opcjonalnie podaj `e2e_run_id`, inaczej ostatni zakończony run E2E na gałęzi domyślnej). URL: [wojmam.github.io/potoki/playwright-report/](https://wojmam.github.io/potoki/playwright-report/). Przed publikacją uruchamiany jest [`tests/scripts/patch-playwright-report.mjs`](../../tests/scripts/patch-playwright-report.mjs) (wymusza jasny motyw — raport Playwright domyślnie psuje kontrast w dark mode systemu).
 
-Uwaga: automatyczny `workflow_run` wymaga, by oba workflow były na gałęzi domyślnej repozytorium. Run E2E z PR nie uruchamia publish. Jeśli domyślna gałąź to `master`, a workflow nasłuchuje tylko `main`, publish się nie włączy — w repo są skonfigurowane obie nazwy oraz `default_branch` z API.
+Uwaga: automatyczny `workflow_run` wymaga, by oba workflow były na gałęzi domyślnej repozytorium. Run E2E z PR nie uruchamia publish. Gałęzie `main` i `master` są obsługiwane w workflow.
 
 Lokalnie: `npm install` → `npx playwright install chromium` → `npm run test:e2e`.
 

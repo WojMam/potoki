@@ -106,6 +106,7 @@ jobs:
           npm run build
           mkdir -p dist/playwright-report
           cp -r playwright-report/* dist/playwright-report/
+          node tests/scripts/patch-playwright-report.mjs dist/playwright-report
 
       - name: Setup GitHub Pages
         uses: actions/configure-pages@v5
