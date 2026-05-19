@@ -240,24 +240,27 @@ export function TimelinePanel({
                         </Button>
                         {entry.linkedFiles.map((file) =>
                           editing ? (
-                            <span key={file.path} className="inline-flex items-center gap-0.5">
+                            <span key={file.path} className="relative inline-flex">
                               <Button
                                 size="sm"
                                 variant="ghost"
-                                className="h-7 bg-primary/[0.035] px-2 text-muted-foreground/86 hover:bg-primary/[0.075] hover:text-primary-foreground"
+                                className={`h-7 bg-primary/[0.035] px-2 text-muted-foreground/86 hover:bg-primary/[0.075] hover:text-primary-foreground ${!isMarkdownLinkedFile(file) ? "pr-5" : ""}`}
                                 onClick={() => onPreviewFile(file, entry)}
                               >
-                                <FileText className="h-3.5 w-3.5" />
-                                {file.label}
+                                <FileText className="h-3.5 w-3.5 shrink-0" />
+                                <span className="max-w-[14rem] truncate">{file.label}</span>
                               </Button>
                               {!isMarkdownLinkedFile(file) ? (
                                 <button
                                   type="button"
-                                  className="rounded-md p-1 text-muted-foreground/56 transition hover:bg-destructive/10 hover:text-destructive-foreground/86"
+                                  className="absolute -right-1 -top-1 z-10 flex h-[1.125rem] w-[1.125rem] items-center justify-center rounded-full bg-destructive/42 text-destructive-foreground/92 shadow-[inset_0_0_0_1px_hsl(var(--destructive)/0.28),0_1px_4px_rgba(0,0,0,0.18)] transition-[background-color,transform,box-shadow] duration-200 ease-out hover:scale-[1.08] hover:bg-destructive/62 hover:shadow-[inset_0_0_0_1px_hsl(var(--destructive)/0.42),0_2px_8px_rgba(0,0,0,0.26)] active:scale-95 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-destructive/50"
                                   aria-label={t("timeline.unlinkFile")}
-                                  onClick={() => onUnlinkFile(entry, file)}
+                                  onClick={(event) => {
+                                    event.stopPropagation();
+                                    onUnlinkFile(entry, file);
+                                  }}
                                 >
-                                  <Link2Off className="h-3.5 w-3.5" />
+                                  <Link2Off className="h-2.5 w-2.5" strokeWidth={2.25} />
                                 </button>
                               ) : null}
                             </span>
