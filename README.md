@@ -6,6 +6,8 @@
 
 [![Latest release](https://img.shields.io/github/v/release/WojMam/potoki?include_prereleases&label=release)](https://github.com/WojMam/potoki/releases)
 [![Live Demo](https://img.shields.io/badge/demo-live-2ea043)](https://wojmam.github.io/potoki/)
+[![E2E Playwright](https://github.com/WojMam/potoki/actions/workflows/e2e-playwright.yml/badge.svg)](https://github.com/WojMam/potoki/actions/workflows/e2e-playwright.yml)
+[![E2E report](https://img.shields.io/badge/E2E%20report-open-2f7f8f)](https://wojmam.github.io/potoki/playwright-report/)
 [![Version](https://img.shields.io/github/package-json/v/WojMam/potoki?label=version)](package.json)
 [![License](https://img.shields.io/github/license/WojMam/potoki)](LICENSE)
 [![Local-first](https://img.shields.io/badge/local--first-yes-2f7f8f)](#local-first-philosophy)
@@ -159,9 +161,11 @@ You can copy this file to another machine and open it in Chrome or Edge.
 ## Project Jobs
 
 [![Deploy to GitHub Pages](https://github.com/WojMam/potoki/actions/workflows/deploy-pages.yaml/badge.svg)](https://github.com/WojMam/potoki/actions/workflows/deploy-pages.yaml)
+[![E2E Playwright](https://github.com/WojMam/potoki/actions/workflows/e2e-playwright.yml/badge.svg)](https://github.com/WojMam/potoki/actions/workflows/e2e-playwright.yml)
 [![Build Release Package](https://github.com/WojMam/potoki/actions/workflows/release-package.yaml/badge.svg)](https://github.com/WojMam/potoki/actions/workflows/release-package.yaml)
 
 - **Deploy to GitHub Pages** builds the static app and publishes it to [wojmam.github.io/potoki](https://wojmam.github.io/potoki/).
+- **E2E Playwright** runs the Playwright suite on every push and pull request to `main`. Open the [latest workflow run](https://github.com/WojMam/potoki/actions/workflows/e2e-playwright.yml) for logs, the job **Summary**, and a downloadable HTML report artifact. On `main`, **Publish Playwright report** also deploys the latest report to [wojmam.github.io/potoki/playwright-report/](https://wojmam.github.io/potoki/playwright-report/).
 - **Build Release Package** builds the app and packages the static output for GitHub releases.
 
 ---
@@ -197,6 +201,16 @@ Preview production build:
 ```bash
 npm run preview
 ```
+
+### E2E tests (Playwright)
+
+```bash
+npx playwright install chromium
+npm run test:e2e
+npm run test:e2e:report   # open the last local HTML report
+```
+
+Strategy and scope: [docs/testing/TEST_STRATEGY.md](docs/testing/TEST_STRATEGY.md).
 
 Production output is intentionally static and self-contained. The current build process emits a single `dist/index.html` file so the app can be copied and opened directly in a supported browser.
 

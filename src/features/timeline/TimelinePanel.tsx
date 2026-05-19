@@ -131,7 +131,12 @@ export function TimelinePanel({
                 </option>
               ))}
             </Select>
-            <Input value={draft.title} onChange={(event) => setDraft({ ...draft, title: event.target.value })} placeholder={t("timeline.entryTitle")} />
+            <Input
+              value={draft.title}
+              onChange={(event) => setDraft({ ...draft, title: event.target.value })}
+              placeholder={t("timeline.entryTitle")}
+              aria-label={t("timeline.entryTitle")}
+            />
           </div>
           <Textarea className="mt-3 min-h-20 resize-none" value={draft.content} onChange={(event) => setDraft({ ...draft, content: event.target.value })} placeholder={t(`timeline.hint.${draft.type}`)} />
           <div className="mt-3 flex justify-end">
@@ -158,6 +163,7 @@ export function TimelinePanel({
                   return (
                     <article
                       key={entry.id}
+                      aria-label={entry.title}
                       className={`group rounded-xl border-l bg-white/[0.018] px-4 py-2 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.014)] transition-all duration-300 ease-out hover:-translate-y-0.5 hover:bg-primary/[0.032] hover:shadow-[inset_0_0_0_1px_hsl(var(--primary)/0.075),0_10px_24px_rgba(0,0,0,0.10)] ${editing ? "bg-primary/[0.045] shadow-[inset_0_0_0_1px_hsl(var(--primary)/0.18)]" : ""} ${typeAccent[entry.type]}`}
                     >
                       <div className="flex flex-wrap items-center justify-between gap-2">

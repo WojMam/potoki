@@ -1,0 +1,53 @@
+/** Polish UI strings used by E2E tests (default locale). */
+export const pl = {
+  workspace: {
+    title: "Cicha lokalna przestrzeń do powrotu do kontekstu pracy.",
+    open: "Otwórz folder",
+    create: "Utwórz przestrzeń",
+    sample: "Utwórz przykładową przestrzeń",
+    name: "Nazwa przestrzeni",
+  },
+  dashboard: {
+    title: "Do czego chcesz wrócić?",
+  },
+  timeline: {
+    back: "Przegląd",
+    entryTitle: "Tytuł wpisu",
+    editTitle: "Tytuł wpisu",
+    addEntry: "Dodaj wpis",
+    edit: "Edytuj wpis",
+    delete: "Usuń wpis",
+    save: "Zapisz",
+    attachNote: "Dodaj notatkę",
+    typeWorkLog: "praca",
+  },
+  stream: {
+    sampleAi: "R&D: lokalna integracja AI",
+    test: "Testowy potok",
+    legacy: "Legacy local AI context",
+    sparse: "Sparse stream",
+  },
+  notes: {
+    titlePlaceholder: "Tytuł notatki",
+    save: "Zapisz notatkę",
+    edit: "Edytuj notatkę",
+    markdownEditor: "Edytor Markdown",
+  },
+  markdown: {
+    bold: "Pogrubienie",
+    italic: "Kursywa",
+    heading2: "Nagłówek 2",
+    bulletedList: "Lista punktowana",
+    link: "Link",
+  },
+  settings: {
+    title: "Ustawienia",
+    english: "English",
+    englishDialog: "Settings",
+  },
+  common: {
+    delete: "Usuń",
+    cancel: "Anuluj",
+    closeDialog: "Zamknij okno",
+  },
+} as const;

@@ -107,6 +107,7 @@ export const en = {
   "notes.attach": "Add note",
   "notes.titlePlaceholder": "Note title",
   "notes.markdownPlaceholder": "# Notes\n\nCapture operational details, decisions, or links.",
+  "notes.markdownEditor": "Markdown editor",
   "notes.previewEmpty": "Markdown preview will appear here as you write.",
   "notes.showTimeline": "Show this note in the timeline",
   "notes.showTimelineHint": "Creates a note entry with this Markdown file attached.",

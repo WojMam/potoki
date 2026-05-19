@@ -107,6 +107,7 @@ export const pl = {
   "notes.attach": "Dodaj notatkę",
   "notes.titlePlaceholder": "Tytuł notatki",
   "notes.markdownPlaceholder": "# Notatki\n\nZapisz szczegóły operacyjne, decyzje albo linki.",
+  "notes.markdownEditor": "Edytor Markdown",
   "notes.previewEmpty": "Podgląd Markdown pojawi się tutaj w trakcie pisania.",
   "notes.showTimeline": "Pokaż tę notatkę na osi wpisów",
   "notes.showTimelineHint": "Utworzy wpis typu notatka z dołączonym plikiem Markdown.",

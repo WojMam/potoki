@@ -1,0 +1,5 @@
+{
+  "id": "sparse-stream",
+  "title": "Sparse stream",
+  "description": "Stream with missing optional fields."
+}

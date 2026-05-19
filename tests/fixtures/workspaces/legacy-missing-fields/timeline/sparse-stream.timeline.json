@@ -1,0 +1,11 @@
+{
+  "streamId": "sparse-stream",
+  "entries": [
+    {
+      "id": "sparse-entry-1",
+      "type": "note",
+      "title": "Sparse entry",
+      "createdAt": "2026-05-10T10:00:00.000Z"
+    }
+  ]
+}

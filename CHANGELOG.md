@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **E2E Playwright** — GitHub Actions workflow, HTML report artifact, job summary, and hosted report at `/playwright-report/` on GitHub Pages after runs on `main`.
+- **Playwright test suite** — smoke, streams, notes, markdown toolbar, settings, and data-compatibility specs with in-memory File System Access mock ([`docs/testing/TEST_STRATEGY.md`](docs/testing/TEST_STRATEGY.md)).
+
 ## [0.1.1] - 2026-05-19
 
 ### Added

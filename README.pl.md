@@ -6,6 +6,8 @@
 
 [![Najnowsze wydanie](https://img.shields.io/github/v/release/WojMam/potoki?include_prereleases&label=release)](https://github.com/WojMam/potoki/releases)
 [![Demo](https://img.shields.io/badge/demo-live-2ea043)](https://wojmam.github.io/potoki/)
+[![E2E Playwright](https://github.com/WojMam/potoki/actions/workflows/e2e-playwright.yml/badge.svg)](https://github.com/WojMam/potoki/actions/workflows/e2e-playwright.yml)
+[![Raport E2E](https://img.shields.io/badge/raport%20E2E-otwórz-2f7f8f)](https://wojmam.github.io/potoki/playwright-report/)
 [![Wersja](https://img.shields.io/github/package-json/v/WojMam/potoki?label=version)](package.json)
 [![Licencja](https://img.shields.io/github/license/WojMam/potoki)](LICENSE)
 [![Local-first](https://img.shields.io/badge/local--first-tak-2f7f8f)](#filozofia-local-first)
@@ -155,9 +157,11 @@ Możesz skopiować ten plik na inną maszynę i otworzyć go w Chrome albo Edge.
 ## Joby projektu
 
 [![Deploy to GitHub Pages](https://github.com/WojMam/potoki/actions/workflows/deploy-pages.yaml/badge.svg)](https://github.com/WojMam/potoki/actions/workflows/deploy-pages.yaml)
+[![E2E Playwright](https://github.com/WojMam/potoki/actions/workflows/e2e-playwright.yml/badge.svg)](https://github.com/WojMam/potoki/actions/workflows/e2e-playwright.yml)
 [![Build Release Package](https://github.com/WojMam/potoki/actions/workflows/release-package.yaml/badge.svg)](https://github.com/WojMam/potoki/actions/workflows/release-package.yaml)
 
 - **Deploy to GitHub Pages** buduje statyczną aplikację i publikuje ją pod adresem [wojmam.github.io/potoki](https://wojmam.github.io/potoki/).
+- **E2E Playwright** uruchamia testy Playwright przy każdym pushu i pull requeście do `main`. W [ostatnim runie workflow](https://github.com/WojMam/potoki/actions/workflows/e2e-playwright.yml) są logi, **Summary** oraz artefakt z raportem HTML. Na gałęzi `main` workflow **Publish Playwright report** publikuje też raport pod [wojmam.github.io/potoki/playwright-report/](https://wojmam.github.io/potoki/playwright-report/).
 - **Build Release Package** buduje aplikację i pakuje statyczny output do wydań GitHub.
 
 ---
@@ -193,6 +197,16 @@ Podgląd produkcyjnego buildu:
 ```bash
 npm run preview
 ```
+
+### Testy E2E (Playwright)
+
+```bash
+npx playwright install chromium
+npm run test:e2e
+npm run test:e2e:report   # ostatni lokalny raport HTML
+```
+
+Strategia i zakres: [docs/testing/TEST_STRATEGY.md](docs/testing/TEST_STRATEGY.md).
 
 Output produkcyjny jest celowo statyczny i samowystarczalny. Obecny build tworzy pojedynczy plik `dist/index.html`, który można skopiować i otworzyć bez lokalnego serwera.
 

@@ -1,0 +1,12 @@
+{
+  "streamId": "legacy-local-ai",
+  "entries": [
+    {
+      "id": "legacy-entry-1",
+      "type": "worklog",
+      "title": "Legacy work log",
+      "body": "Older entries used body instead of content.",
+      "createdAt": "2026-05-11T09:00:00.000Z"
+    }
+  ]
+}

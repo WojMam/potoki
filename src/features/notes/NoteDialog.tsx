@@ -67,6 +67,7 @@ export function NoteDialog({
               value={markdown}
               onChange={(event) => setMarkdown(event.target.value)}
               placeholder={t("notes.markdownPlaceholder")}
+              aria-label={t("notes.markdownEditor")}
             />
           </div>
 

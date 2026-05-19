@@ -1,0 +1,11 @@
+{
+  "id": "test-stream",
+  "title": "Testowy potok",
+  "description": "Jeden potok do testów E2E.",
+  "status": "active",
+  "currentContext": "Kontekst testowy.",
+  "nextActions": ["Krok testowy"],
+  "linkedFiles": [],
+  "createdAt": "2026-05-10T08:00:00.000Z",
+  "updatedAt": "2026-05-10T08:00:00.000Z"
+}

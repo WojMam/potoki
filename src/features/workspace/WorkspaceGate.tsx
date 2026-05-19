@@ -47,7 +47,12 @@ export function WorkspaceGate({ workspaceName, setWorkspaceName, onOpen, onCreat
         ) : (
           <Card className="max-w-2xl p-5">
             <div className="grid gap-4 sm:grid-cols-[1fr_auto]">
-              <Input value={workspaceName} onChange={(event) => setWorkspaceName(event.target.value)} placeholder={t("workspace.namePlaceholder")} />
+              <Input
+                value={workspaceName}
+                onChange={(event) => setWorkspaceName(event.target.value)}
+                placeholder={t("workspace.namePlaceholder")}
+                aria-label={t("workspace.namePlaceholder")}
+              />
               <Button onClick={onOpen} disabled={busy}>
                 <FolderOpen className="h-4 w-4" />
                 {t("workspace.open")}
