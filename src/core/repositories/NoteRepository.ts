@@ -15,15 +15,17 @@ export class NoteRepository {
   }
 
   async create(streamId: string, title: string, markdown: string) {
-    await this.adapter.ensureDirectory(this.root, `${this.directory}/${streamId}`);
+    const dirPath = `${this.directory}/${streamId}`;
+    const dir = await this.adapter.ensureDirectory(this.root, dirPath);
     const base = `${todayStamp()}-${slugify(title)}.md`;
     let filename = base;
+    const existingNames = new Set((await this.adapter.listFiles(dir)).map((file) => file.name));
     let counter = 2;
-    while (await this.adapter.exists(this.root, `${this.directory}/${streamId}/${filename}`)) {
+    while (existingNames.has(filename)) {
       filename = base.replace(/\.md$/, `-${counter}.md`);
       counter += 1;
     }
-    const path = `${this.directory}/${streamId}/${filename}`;
+    const path = `${dirPath}/${filename}`;
     await this.store.write(path, markdown);
     return path;
   }

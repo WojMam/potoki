@@ -22,6 +22,7 @@ export function NoteDialog({
   setIncludeTimelineEntry,
   onClose,
   onSave,
+  isSaving = false,
 }: {
   open: boolean;
   mode: "stream" | "entry";
@@ -35,6 +36,7 @@ export function NoteDialog({
   setIncludeTimelineEntry: (value: boolean) => void;
   onClose: () => void;
   onSave: () => void;
+  isSaving?: boolean;
 }) {
   const { t } = useI18n();
   const markdownTextareaRef = useRef<HTMLTextAreaElement | null>(null);
@@ -113,10 +115,12 @@ export function NoteDialog({
         )}
 
         <div className="flex shrink-0 justify-end gap-2">
-          <Button variant="ghost" onClick={onClose}>
+          <Button variant="ghost" onClick={onClose} disabled={isSaving}>
             {t("common.cancel")}
           </Button>
-          <Button onClick={onSave}>{t("notes.save")}</Button>
+          <Button onClick={onSave} disabled={isSaving || !title.trim()}>
+            {isSaving ? t("notes.saving") : t("notes.save")}
+          </Button>
         </div>
       </div>
     </Dialog>

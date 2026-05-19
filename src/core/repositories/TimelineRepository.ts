@@ -4,6 +4,10 @@ import { isRecord, normalizeTimeline, normalizeTimelineEntry } from "../data/nor
 import type { TimelineEntry } from "../models/timeline";
 import { validateTimeline } from "../utils/validation";
 
+function sortEntries(entries: TimelineEntry[]) {
+  return [...entries].sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+}
+
 export class TimelineRepository {
   private readonly store: JsonFileStore;
 
@@ -21,7 +25,7 @@ export class TimelineRepository {
       const raw = await this.store.read(path);
       const validation = validateTimeline(raw, streamId);
       if (!validation.ok) return { entries: [], issues: [`Invalid timeline file ${path}: ${validation.errors.join(", ")}`] };
-      return { entries: validation.value.entries.sort((a, b) => b.createdAt.localeCompare(a.createdAt)), issues: [] };
+      return { entries: sortEntries(validation.value.entries), issues: [] };
     } catch (error) {
       return {
         entries: [],
@@ -33,9 +37,18 @@ export class TimelineRepository {
   async loadMany(streamIds: string[]) {
     const results = await Promise.all(streamIds.map((id) => this.load(id)));
     return {
-      entries: results.flatMap((result) => result.entries).sort((a, b) => b.createdAt.localeCompare(a.createdAt)),
+      entries: sortEntries(results.flatMap((result) => result.entries)),
       issues: results.flatMap((result) => result.issues),
     };
+  }
+
+  async saveEntries(streamId: string, entries: TimelineEntry[]) {
+    const normalizedEntries = sortEntries(entries.map((entry) => normalizeTimelineEntry(entry, streamId)));
+    await this.store.write(`${this.directory}/${streamId}.timeline.json`, {
+      streamId,
+      entries: normalizedEntries,
+    });
+    return normalizedEntries;
   }
 
   async save(streamId: string, entries: TimelineEntry[]) {
@@ -47,36 +60,31 @@ export class TimelineRepository {
       existing = {};
     }
     const normalized = normalizeTimeline({ ...(isRecord(existing) ? existing : {}), streamId, entries }, streamId);
-    await this.store.write(
-      path,
-      {
-        ...normalized,
-        streamId,
-        entries: normalized.entries.sort((a, b) => b.createdAt.localeCompare(a.createdAt)),
-      },
-    );
+    await this.store.write(path, {
+      ...normalized,
+      streamId,
+      entries: sortEntries(normalized.entries),
+    });
   }
 
   async append(streamId: string, entry: TimelineEntry) {
     const { entries } = await this.load(streamId);
-    const next = [normalizeTimelineEntry(entry, streamId), ...entries];
-    await this.save(streamId, next);
-    return next;
+    return this.saveEntries(streamId, [normalizeTimelineEntry(entry, streamId), ...entries]);
   }
 
   async update(streamId: string, entry: TimelineEntry) {
     const { entries } = await this.load(streamId);
     const normalized = normalizeTimelineEntry(entry, streamId);
     const next = entries.map((item) => (item.id === normalized.id ? normalized : item));
-    await this.save(streamId, next);
-    return next;
+    return this.saveEntries(streamId, next);
   }
 
   async deleteEntry(streamId: string, entryId: string) {
     const { entries } = await this.load(streamId);
-    const next = entries.filter((item) => item.id !== entryId);
-    await this.save(streamId, next);
-    return next;
+    return this.saveEntries(
+      streamId,
+      entries.filter((item) => item.id !== entryId),
+    );
   }
 
   async deleteTimeline(streamId: string) {

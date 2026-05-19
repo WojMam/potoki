@@ -113,6 +113,7 @@ export const pl = {
   "notes.timelineDescription": "Opcjonalny opis wpisu",
   "notes.attachHint": "Ta notatka zostanie dodana do wybranego wpisu bez tworzenia nowego wpisu.",
   "notes.save": "Zapisz notatkę",
+  "notes.saving": "Zapisywanie…",
   "notes.edit": "Edytuj notatkę",
   "markdown.toolbar": "Toolbar Markdown",
   "markdown.bold": "Pogrubienie",

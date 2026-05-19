@@ -1,12 +1,19 @@
 export type DirectoryHandle = FileSystemDirectoryHandle;
 
 export class FileSystemAccessAdapter {
+  private readonly dirCache = new Map<string, DirectoryHandle>();
+
   static isSupported() {
     return typeof window !== "undefined" && typeof window.showDirectoryPicker === "function";
   }
 
+  clearCache() {
+    this.dirCache.clear();
+  }
+
   async openWorkspaceFolder() {
     if (!window.showDirectoryPicker) throw new Error("File System Access API is unavailable.");
+    this.clearCache();
     return window.showDirectoryPicker({ id: "potoki-workspace", mode: "readwrite" });
   }
 
@@ -17,9 +24,27 @@ export class FileSystemAccessAdapter {
   }
 
   async getDirectory(root: DirectoryHandle, path: string, create = false) {
-    const parts = path.split("/").filter(Boolean);
+    const normalized = path.split("/").filter(Boolean).join("/");
+    if (!normalized) return root;
+
+    const cached = this.dirCache.get(normalized);
+    if (cached) return cached;
+
+    const parts = normalized.split("/");
     let current = root;
-    for (const part of parts) current = await current.getDirectoryHandle(part, { create });
+    let built = "";
+
+    for (const part of parts) {
+      built = built ? `${built}/${part}` : part;
+      const hit = this.dirCache.get(built);
+      if (hit) {
+        current = hit;
+        continue;
+      }
+      current = await current.getDirectoryHandle(part, { create });
+      this.dirCache.set(built, current);
+    }
+
     return current;
   }
 
@@ -52,6 +77,8 @@ export class FileSystemAccessAdapter {
   async removeFile(root: DirectoryHandle, path: string) {
     const { dir, name } = await this.resolveParent(root, path, false);
     await dir.removeEntry(name);
+    const parentPath = path.split("/").filter(Boolean).slice(0, -1).join("/");
+    if (parentPath) this.dirCache.delete(path);
   }
 
   async exists(root: DirectoryHandle, path: string) {

@@ -113,6 +113,7 @@ export const en = {
   "notes.timelineDescription": "Optional timeline description",
   "notes.attachHint": "This note will be attached to the selected timeline entry without creating a new entry.",
   "notes.save": "Save note",
+  "notes.saving": "Saving…",
   "notes.edit": "Edit note",
   "markdown.toolbar": "Markdown toolbar",
   "markdown.bold": "Bold",

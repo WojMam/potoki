@@ -13,6 +13,7 @@ import { NoteRepository } from "../core/repositories/NoteRepository";
 import { StreamRepository } from "../core/repositories/StreamRepository";
 import { TimelineRepository } from "../core/repositories/TimelineRepository";
 import { WorkspaceRepository, type LoadIssue } from "../core/repositories/WorkspaceRepository";
+import { normalizeTimelineEntry } from "../core/data/normalizers";
 import { nowIso } from "../core/utils/date";
 import { createId, slugify } from "../core/utils/ids";
 import { Dashboard } from "../features/dashboard/Dashboard";
@@ -36,6 +37,7 @@ type Repositories = {
 
 type NoteDialogMode = { kind: "stream" } | { kind: "entry"; entry: TimelineEntry };
 type DeleteTarget = { kind: "stream"; stream: Workstream } | { kind: "entry"; entry: TimelineEntry } | null;
+type WriteOptions = { touchWorkspace?: boolean };
 
 const adapter = new FileSystemAccessAdapter();
 
@@ -76,6 +78,7 @@ export function App() {
   const [newStreamTitle, setNewStreamTitle] = useState("");
   const [newStreamDescription, setNewStreamDescription] = useState("");
   const [deleteTarget, setDeleteTarget] = useState<DeleteTarget>(null);
+  const [noteSaving, setNoteSaving] = useState(false);
 
   const selectedStream = streams.find((stream) => stream.id === selectedId);
   const selectedEntries = entries.filter((entry) => entry.streamId === selectedId);
@@ -97,6 +100,7 @@ export function App() {
   }, [selectedStream?.id]);
 
   async function wireRepositories(handle: DirectoryHandle) {
+    adapter.clearCache();
     const nextRepos: Repositories = {
       workspace: new WorkspaceRepository(adapter, handle),
       streams: new StreamRepository(adapter, handle),
@@ -161,49 +165,76 @@ export function App() {
     }
   }
 
-  async function saveStream(stream: Workstream) {
+  async function flushWorkspaceTouch() {
+    if (!repos || !manifest) return;
+    setManifest(await repos.workspace.touch(manifest));
+  }
+
+  async function saveStream(stream: Workstream, options?: WriteOptions) {
     if (!repos || !manifest) return;
     try {
       const saved = await repos.streams.save(stream);
       setStreams((current) => current.map((item) => (item.id === saved.id ? saved : item)));
-      setManifest(await repos.workspace.touch(manifest));
+      if (options?.touchWorkspace !== false) {
+        await flushWorkspaceTouch();
+      }
       setError("");
     } catch (err) {
       setError(toFriendlyError(err, t("errors.writeStream")));
     }
   }
 
-  async function createTimelineEntry(partial: Pick<TimelineEntry, "streamId" | "type" | "title" | "content" | "linkedFiles">) {
+  async function createTimelineEntry(
+    partial: Pick<TimelineEntry, "streamId" | "type" | "title" | "content" | "linkedFiles">,
+    options?: WriteOptions,
+  ) {
     if (!repos || !manifest) return;
     try {
       const entry: TimelineEntry = { ...partial, id: createId("entry"), createdAt: nowIso() };
-      const nextEntries = await repos.timeline.append(entry.streamId, entry);
+      const streamEntries = entries.filter((item) => item.streamId === entry.streamId);
+      const normalized = normalizeTimelineEntry(entry, entry.streamId);
+      const nextEntries = await repos.timeline.saveEntries(entry.streamId, [normalized, ...streamEntries]);
       setEntries((current) => [...current.filter((item) => item.streamId !== entry.streamId), ...nextEntries]);
-      setManifest(await repos.workspace.touch(manifest));
+      if (options?.touchWorkspace !== false) {
+        await flushWorkspaceTouch();
+      }
       setError("");
     } catch (err) {
       setError(toFriendlyError(err, t("errors.writeTimeline")));
     }
   }
 
-  async function updateTimelineEntry(entry: TimelineEntry) {
+  async function updateTimelineEntry(entry: TimelineEntry, options?: WriteOptions) {
     if (!repos || !manifest) return;
     try {
-      const nextEntries = await repos.timeline.update(entry.streamId, entry);
+      const streamEntries = entries.filter((item) => item.streamId === entry.streamId);
+      const normalized = normalizeTimelineEntry(entry, entry.streamId);
+      const nextEntries = await repos.timeline.saveEntries(
+        entry.streamId,
+        streamEntries.map((item) => (item.id === normalized.id ? normalized : item)),
+      );
       setEntries((current) => [...current.filter((item) => item.streamId !== entry.streamId), ...nextEntries]);
-      setManifest(await repos.workspace.touch(manifest));
+      if (options?.touchWorkspace !== false) {
+        await flushWorkspaceTouch();
+      }
       setError("");
     } catch (err) {
       setError(toFriendlyError(err, t("errors.updateTimeline")));
     }
   }
 
-  async function deleteTimelineEntry(entry: TimelineEntry) {
+  async function deleteTimelineEntry(entry: TimelineEntry, options?: WriteOptions) {
     if (!repos || !manifest) return;
     try {
-      const nextEntries = await repos.timeline.deleteEntry(entry.streamId, entry.id);
+      const streamEntries = entries.filter((item) => item.streamId === entry.streamId);
+      const nextEntries = await repos.timeline.saveEntries(
+        entry.streamId,
+        streamEntries.filter((item) => item.id !== entry.id),
+      );
       setEntries((current) => [...current.filter((item) => item.streamId !== entry.streamId), ...nextEntries]);
-      setManifest(await repos.workspace.touch(manifest));
+      if (options?.touchWorkspace !== false) {
+        await flushWorkspaceTouch();
+      }
       setError("");
     } catch (err) {
       setError(toFriendlyError(err, t("errors.deleteTimelineEntry")));
@@ -219,7 +250,7 @@ export function App() {
       setEntries((current) => current.filter((entry) => entry.streamId !== stream.id));
       setSelectedId(undefined);
       setEditStream(null);
-      setManifest(await repos.workspace.touch(manifest));
+      await flushWorkspaceTouch();
       setError("");
     } catch (err) {
       setError(toFriendlyError(err, t("errors.deleteStream")));
@@ -239,14 +270,18 @@ export function App() {
 
   async function addTimelineEntry() {
     if (!selectedStream || !entryDraft.title.trim()) return;
-    await createTimelineEntry({
-      streamId: selectedStream.id,
-      type: entryDraft.type,
-      title: entryDraft.title.trim(),
-      content: entryDraft.content.trim(),
-      linkedFiles: [],
-    });
-    await saveStream(selectedStream);
+    await createTimelineEntry(
+      {
+        streamId: selectedStream.id,
+        type: entryDraft.type,
+        title: entryDraft.title.trim(),
+        content: entryDraft.content.trim(),
+        linkedFiles: [],
+      },
+      { touchWorkspace: false },
+    );
+    await saveStream(selectedStream, { touchWorkspace: false });
+    await flushWorkspaceTouch();
     setEntryDraft({ type: "note", title: "", content: "" });
   }
 
@@ -258,46 +293,99 @@ export function App() {
 
   async function markActionDone(action: string) {
     if (!selectedStream) return;
-    await saveStream({ ...selectedStream, nextActions: selectedStream.nextActions.filter((item) => item !== action) });
-    await createTimelineEntry({
-      streamId: selectedStream.id,
-      type: "action_done",
-      title: t("system.resumeCleared"),
-      content: action,
-      linkedFiles: [],
+    await saveStream(
+      { ...selectedStream, nextActions: selectedStream.nextActions.filter((item) => item !== action) },
+      { touchWorkspace: false },
+    );
+    await createTimelineEntry(
+      {
+        streamId: selectedStream.id,
+        type: "action_done",
+        title: t("system.resumeCleared"),
+        content: action,
+        linkedFiles: [],
+      },
+      { touchWorkspace: false },
+    );
+    await flushWorkspaceTouch();
+  }
+
+  function openPreviewFromMemory(file: LinkedFile, content: string) {
+    setFilePreview({
+      path: file.path,
+      label: file.label,
+      type: file.type,
+      content,
+      isMarkdown: file.type === "markdown" || file.path.toLowerCase().endsWith(".md"),
     });
   }
 
   async function saveNote() {
-    if (!repos || !selectedStream || !noteTitle.trim()) return;
+    if (!repos || !manifest || !selectedStream || !noteTitle.trim() || noteSaving) return;
+
+    const title = noteTitle.trim();
+    const markdown = noteMarkdown || `# ${title}`;
+    const mode = noteMode;
+    const stream = selectedStream;
+    const includeTimelineEntry = noteIncludeTimelineEntry;
+    const timelineDescription = noteTimelineDescription;
+
+    setNoteSaving(true);
+    setNoteDialog(false);
+    setNoteTitle("");
+    setNoteMarkdown("");
+    setNoteTimelineDescription("");
+    setNoteIncludeTimelineEntry(false);
+    setError("");
+
     try {
-      const path = await repos.notes.create(selectedStream.id, noteTitle.trim(), noteMarkdown || `# ${noteTitle.trim()}`);
-      const linkedFile = linkedFileFromPath(path, noteTitle.trim(), "markdown");
-      if (noteMode.kind === "entry") {
-        await updateTimelineEntry({
-          ...noteMode.entry,
-          linkedFiles: [...noteMode.entry.linkedFiles, linkedFile],
-        });
+      const path = await repos.notes.create(stream.id, title, markdown);
+      const linkedFile = linkedFileFromPath(path, title, "markdown");
+
+      if (mode.kind === "entry") {
+        const updatedEntry = { ...mode.entry, linkedFiles: [...mode.entry.linkedFiles, linkedFile] };
+        const streamEntries = entries.filter((item) => item.streamId === mode.entry.streamId);
+        const normalized = normalizeTimelineEntry(updatedEntry, mode.entry.streamId);
+        const nextEntries = await repos.timeline.saveEntries(
+          mode.entry.streamId,
+          streamEntries.map((item) => (item.id === normalized.id ? normalized : item)),
+        );
+        setEntries((current) => [...current.filter((item) => item.streamId !== mode.entry.streamId), ...nextEntries]);
       } else {
-        await saveStream({ ...selectedStream, linkedFiles: [...selectedStream.linkedFiles, linkedFile] });
-        if (noteIncludeTimelineEntry) {
-          await createTimelineEntry({
-            streamId: selectedStream.id,
+        const updatedStream: Workstream = { ...stream, linkedFiles: [...stream.linkedFiles, linkedFile] };
+        const writes: Promise<unknown>[] = [repos.streams.save(updatedStream)];
+
+        if (includeTimelineEntry) {
+          const entry: TimelineEntry = {
+            id: createId("entry"),
+            streamId: stream.id,
             type: "note",
-            title: noteTitle.trim(),
-            content: noteTimelineDescription.trim() || t("system.noteAdded", { title: noteTitle.trim() }),
+            title,
+            content: timelineDescription.trim() || t("system.noteAdded", { title }),
+            createdAt: nowIso(),
             linkedFiles: [linkedFile],
-          });
+          };
+          const streamEntries = entries.filter((item) => item.streamId === stream.id);
+          const normalized = normalizeTimelineEntry(entry, stream.id);
+          writes.push(repos.timeline.saveEntries(stream.id, [normalized, ...streamEntries]));
+        }
+
+        const results = await Promise.all(writes);
+        const savedStream = results[0] as Workstream;
+        setStreams((current) => current.map((item) => (item.id === savedStream.id ? savedStream : item)));
+
+        if (includeTimelineEntry) {
+          const nextEntries = results[1] as TimelineEntry[];
+          setEntries((current) => [...current.filter((item) => item.streamId !== stream.id), ...nextEntries]);
         }
       }
-      setNoteDialog(false);
-      setNoteTitle("");
-      setNoteMarkdown("");
-      setNoteTimelineDescription("");
-      setNoteIncludeTimelineEntry(false);
-      await previewFile(linkedFile);
+
+      await flushWorkspaceTouch();
+      openPreviewFromMemory(linkedFile, markdown);
     } catch (err) {
       setError(toFriendlyError(err, t("errors.createNote")));
+    } finally {
+      setNoteSaving(false);
     }
   }
 
@@ -342,14 +430,21 @@ export function App() {
       const file = await adapter.chooseLocalFile();
       const relative = (await adapter.relativePathForFile(root, file)) ?? file.name;
       const linkedFile = linkedFileFromPath(relative, file.name, file.name.split(".").pop() || "file");
-      await saveStream({ ...selectedStream, linkedFiles: [...selectedStream.linkedFiles, linkedFile] });
-      await createTimelineEntry({
-        streamId: selectedStream.id,
-        type: "file_link",
-        title: t("system.linkedFile", { name: file.name }),
-        content: relative,
-        linkedFiles: [linkedFile],
-      });
+      await saveStream(
+        { ...selectedStream, linkedFiles: [...selectedStream.linkedFiles, linkedFile] },
+        { touchWorkspace: false },
+      );
+      await createTimelineEntry(
+        {
+          streamId: selectedStream.id,
+          type: "file_link",
+          title: t("system.linkedFile", { name: file.name }),
+          content: relative,
+          linkedFiles: [linkedFile],
+        },
+        { touchWorkspace: false },
+      );
+      await flushWorkspaceTouch();
     } catch (err) {
       setError(toFriendlyError(err, t("errors.linkFile")));
     }
@@ -531,6 +626,7 @@ export function App() {
         setIncludeTimelineEntry={setNoteIncludeTimelineEntry}
         onClose={() => setNoteDialog(false)}
         onSave={saveNote}
+        isSaving={noteSaving}
       />
       <WorkLogDialog
         open={workLogOpen}

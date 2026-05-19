@@ -33,6 +33,13 @@ React UI
 
 UI should call repositories/actions, not filesystem APIs.
 
+### Write performance
+
+- Timeline updates from app state use `TimelineRepository.saveEntries` (no read-before-write on each edit).
+- Multi-step user actions batch a single `workspace.json` touch via `flushWorkspaceTouch` in `App.tsx`.
+- `FileSystemAccessAdapter` caches directory handles per workspace session.
+- Saves avoid full `refresh()`; UI state updates from returned repository data.
+
 ## Data Normalization
 
 - `src/core/data/defaults.ts`
