@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.4] - 2026-05-19
+
+### Changed
+
+- **Unlink file control on timeline entries** — round badge integrated in the top-right corner of the linked-file chip (edit mode), with a softer destructive tint and hover scale/shadow feedback.
+
 ## [0.1.3] - 2026-05-19
 
 ### Added
