@@ -1,4 +1,4 @@
-import { ArrowLeft, FilePlus2, FileText, NotebookPen, Pencil, PlusCircle, Trash2 } from "lucide-react";
+import { ArrowLeft, FilePlus2, FileText, Link2Off, NotebookPen, Pencil, PlusCircle, Trash2 } from "lucide-react";
 import { useEffect, useState, type KeyboardEvent } from "react";
 import { FlowScrollArea } from "../../components/layout/FlowScrollArea";
 import { Badge } from "../../components/ui/badge";
@@ -6,6 +6,7 @@ import { Button } from "../../components/ui/button";
 import { Select } from "../../components/ui/select";
 import { Textarea } from "../../components/ui/textarea";
 import { Input } from "../../components/ui/input";
+import { isMarkdownLinkedFile } from "../../core/data/linkedFiles";
 import { useI18n } from "../../core/i18n";
 import type { LinkedFile } from "../../core/models/fileLink";
 import type { TimelineEntry, TimelineEntryType } from "../../core/models/timeline";
@@ -29,6 +30,7 @@ export function TimelinePanel({
   setDraft,
   onAddEntry,
   onPreviewFile,
+  onUnlinkFile,
   onAttachNote,
   onAttachFile,
   onUpdateEntry,
@@ -40,7 +42,8 @@ export function TimelinePanel({
   draft: { type: TimelineEntryType; title: string; content: string };
   setDraft: (draft: { type: TimelineEntryType; title: string; content: string }) => void;
   onAddEntry: () => void;
-  onPreviewFile: (file: LinkedFile) => void;
+  onPreviewFile: (file: LinkedFile, entry: TimelineEntry) => void;
+  onUnlinkFile: (entry: TimelineEntry, file: LinkedFile) => void;
   onAttachNote: (entry: TimelineEntry) => void;
   onAttachFile: (entry: TimelineEntry) => void;
   onUpdateEntry: (entry: TimelineEntry) => void;
@@ -235,12 +238,42 @@ export function TimelinePanel({
                           <FilePlus2 className="h-3.5 w-3.5" />
                           {t("timeline.attachFile")}
                         </Button>
-                        {entry.linkedFiles.map((file) => (
-                          <Button key={file.path} size="sm" variant="ghost" className="h-7 bg-primary/[0.035] px-2 text-muted-foreground/86 hover:bg-primary/[0.075] hover:text-primary-foreground" onClick={() => onPreviewFile(file)}>
-                            <FileText className="h-3.5 w-3.5" />
-                            {file.label}
-                          </Button>
-                        ))}
+                        {entry.linkedFiles.map((file) =>
+                          editing ? (
+                            <span key={file.path} className="inline-flex items-center gap-0.5">
+                              <Button
+                                size="sm"
+                                variant="ghost"
+                                className="h-7 bg-primary/[0.035] px-2 text-muted-foreground/86 hover:bg-primary/[0.075] hover:text-primary-foreground"
+                                onClick={() => onPreviewFile(file, entry)}
+                              >
+                                <FileText className="h-3.5 w-3.5" />
+                                {file.label}
+                              </Button>
+                              {!isMarkdownLinkedFile(file) ? (
+                                <button
+                                  type="button"
+                                  className="rounded-md p-1 text-muted-foreground/56 transition hover:bg-destructive/10 hover:text-destructive-foreground/86"
+                                  aria-label={t("timeline.unlinkFile")}
+                                  onClick={() => onUnlinkFile(entry, file)}
+                                >
+                                  <Link2Off className="h-3.5 w-3.5" />
+                                </button>
+                              ) : null}
+                            </span>
+                          ) : (
+                            <Button
+                              key={file.path}
+                              size="sm"
+                              variant="ghost"
+                              className="h-7 bg-primary/[0.035] px-2 text-muted-foreground/86 hover:bg-primary/[0.075] hover:text-primary-foreground"
+                              onClick={() => onPreviewFile(file, entry)}
+                            >
+                              <FileText className="h-3.5 w-3.5" />
+                              {file.label}
+                            </Button>
+                          ),
+                        )}
                       </div>
                     </article>
                   );

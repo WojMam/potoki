@@ -13,6 +13,11 @@ import { NoteRepository } from "../core/repositories/NoteRepository";
 import { StreamRepository } from "../core/repositories/StreamRepository";
 import { TimelineRepository } from "../core/repositories/TimelineRepository";
 import { WorkspaceRepository, type LoadIssue } from "../core/repositories/WorkspaceRepository";
+import {
+  countLinkedFileReferences,
+  entryWithoutLinkedFile,
+  isMarkdownLinkedFile,
+} from "../core/data/linkedFiles";
 import { normalizeTimelineEntry } from "../core/data/normalizers";
 import { nowIso } from "../core/utils/date";
 import { createId, slugify } from "../core/utils/ids";
@@ -37,6 +42,7 @@ type Repositories = {
 
 type NoteDialogMode = { kind: "stream" } | { kind: "entry"; entry: TimelineEntry };
 type DeleteTarget = { kind: "stream"; stream: Workstream } | { kind: "entry"; entry: TimelineEntry } | null;
+type NoteRemoveTarget = { entry: TimelineEntry; path: string } | null;
 type WriteOptions = { touchWorkspace?: boolean };
 
 const adapter = new FileSystemAccessAdapter();
@@ -78,6 +84,7 @@ export function App() {
   const [newStreamTitle, setNewStreamTitle] = useState("");
   const [newStreamDescription, setNewStreamDescription] = useState("");
   const [deleteTarget, setDeleteTarget] = useState<DeleteTarget>(null);
+  const [noteRemoveTarget, setNoteRemoveTarget] = useState<NoteRemoveTarget>(null);
   const [noteSaving, setNoteSaving] = useState(false);
 
   const selectedStream = streams.find((stream) => stream.id === selectedId);
@@ -310,13 +317,19 @@ export function App() {
     await flushWorkspaceTouch();
   }
 
-  function openPreviewFromMemory(file: LinkedFile, content: string) {
+  function previewContextFromEntry(entry?: TimelineEntry) {
+    if (!entry) return undefined;
+    return { kind: "entry" as const, entryId: entry.id, streamId: entry.streamId };
+  }
+
+  function openPreviewFromMemory(file: LinkedFile, content: string, entry?: TimelineEntry) {
     setFilePreview({
       path: file.path,
       label: file.label,
       type: file.type,
       content,
-      isMarkdown: file.type === "markdown" || file.path.toLowerCase().endsWith(".md"),
+      isMarkdown: isMarkdownLinkedFile(file),
+      context: previewContextFromEntry(entry),
     });
   }
 
@@ -381,7 +394,7 @@ export function App() {
       }
 
       await flushWorkspaceTouch();
-      openPreviewFromMemory(linkedFile, markdown);
+      openPreviewFromMemory(linkedFile, markdown, mode.kind === "entry" ? mode.entry : undefined);
     } catch (err) {
       setError(toFriendlyError(err, t("errors.createNote")));
     } finally {
@@ -400,15 +413,17 @@ export function App() {
     }
   }
 
-  async function previewFile(file: LinkedFile) {
+  async function previewFile(file: LinkedFile, entry?: TimelineEntry) {
     if (!repos) return;
-    const isMarkdown = file.type === "markdown" || file.path.toLowerCase().endsWith(".md");
+    const isMarkdown = isMarkdownLinkedFile(file);
+    const context = previewContextFromEntry(entry);
     setFilePreview({
       path: file.path,
       label: file.label,
       type: file.type,
       content: null,
       isMarkdown,
+      context,
     });
     try {
       setFilePreview({
@@ -417,10 +432,42 @@ export function App() {
         type: file.type,
         content: await repos.notes.read(file.path),
         isMarkdown,
+        context,
       });
     } catch (err) {
       setFilePreview(null);
       setError(toFriendlyError(err, t("errors.readFile", { path: file.path })));
+    }
+  }
+
+  async function unlinkFileFromEntry(entry: TimelineEntry, file: LinkedFile) {
+    if (isMarkdownLinkedFile(file)) return;
+    await updateTimelineEntry(entryWithoutLinkedFile(entry, file.path));
+  }
+
+  function requestRemoveNoteFromEntry() {
+    if (!filePreview?.context || filePreview.context.kind !== "entry") return;
+    const entry = entries.find((item) => item.id === filePreview.context?.entryId);
+    if (!entry) return;
+    setNoteRemoveTarget({ entry, path: filePreview.path });
+  }
+
+  async function confirmRemoveNoteFromEntry() {
+    const target = noteRemoveTarget;
+    if (!target || !repos) return;
+    setNoteRemoveTarget(null);
+    const { entry, path } = target;
+    const refs = countLinkedFileReferences(path, streams, entries);
+    try {
+      await updateTimelineEntry(entryWithoutLinkedFile(entry, path));
+      if (refs <= 1) {
+        await repos.notes.delete(path);
+      }
+      setFilePreview(null);
+      await flushWorkspaceTouch();
+      setError("");
+    } catch (err) {
+      setError(toFriendlyError(err, t("errors.removeNote")));
     }
   }
 
@@ -575,6 +622,7 @@ export function App() {
               setDraft={setEntryDraft}
               onAddEntry={addTimelineEntry}
               onPreviewFile={previewFile}
+              onUnlinkFile={unlinkFileFromEntry}
               onAttachNote={openEntryNoteDialog}
               onAttachFile={linkFileToEntry}
               onUpdateEntry={updateTimelineEntry}
@@ -647,7 +695,12 @@ export function App() {
         onCreate={createStream}
       />
       <SettingsDialog open={settingsOpen} onClose={() => setSettingsOpen(false)} />
-      <FilePreviewDialog preview={filePreview} onClose={() => setFilePreview(null)} onSave={saveExistingNote} />
+      <FilePreviewDialog
+        preview={filePreview}
+        onClose={() => setFilePreview(null)}
+        onSave={saveExistingNote}
+        onRequestRemoveFromEntry={filePreview?.context?.kind === "entry" ? requestRemoveNoteFromEntry : undefined}
+      />
       <ConfirmationDialog
         open={Boolean(deleteTarget)}
         title={deleteTarget?.kind === "stream" ? t("stream.delete") : t("timeline.delete")}
@@ -657,6 +710,16 @@ export function App() {
         confirmLabel={t("common.delete")}
         onCancel={() => setDeleteTarget(null)}
         onConfirm={confirmDelete}
+      />
+      <ConfirmationDialog
+        open={Boolean(noteRemoveTarget)}
+        title={t("notes.removeFromEntryTitle")}
+        body={t("notes.removeFromEntryBody")}
+        detail={filePreview?.label}
+        cancelLabel={t("common.cancel")}
+        confirmLabel={t("notes.removeFromEntryConfirm")}
+        onCancel={() => setNoteRemoveTarget(null)}
+        onConfirm={confirmRemoveNoteFromEntry}
       />
       {!streams.length ? (
         <div className="fixed inset-x-0 bottom-8 flex justify-center">

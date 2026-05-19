@@ -37,4 +37,8 @@ export class NoteRepository {
   write(path: string, markdown: string) {
     return this.store.write(path, markdown);
   }
+
+  delete(path: string) {
+    return this.adapter.removeFile(this.root, path);
+  }
 }

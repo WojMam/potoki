@@ -8,7 +8,14 @@
       "title": "Wpis startowy",
       "content": "Treść wpisu startowego.",
       "createdAt": "2026-05-10T09:00:00.000Z",
-      "linkedFiles": []
+      "linkedFiles": [
+        {
+          "label": "diagram.drawio",
+          "path": "artifacts/test-stream/diagram.drawio",
+          "type": "drawio",
+          "addedAt": "2026-05-10T09:05:00.000Z"
+        }
+      ]
     }
   ]
 }

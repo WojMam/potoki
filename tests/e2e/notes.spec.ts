@@ -34,4 +34,22 @@ test.describe("Notes @critical", () => {
     await expect(page.getByRole("heading", { name: "Zaktualizowany nagłówek", level: 1 })).toBeVisible();
     await page.getByRole("button", { name: pl.common.closeDialog }).click();
   });
+
+  test("should remove note from entry while editing preview", async ({ page }) => {
+    const entry = page.getByRole("article", { name: "Wpis startowy" });
+    const noteTitle = "Notatka do usunięcia";
+
+    await entry.getByRole("button", { name: pl.timeline.attachNote }).click();
+    await page.getByRole("dialog").getByPlaceholder(pl.notes.titlePlaceholder).fill(noteTitle);
+    await page.getByLabel(pl.notes.markdownEditor).fill("# Tymczasowa\n\nDo usunięcia.");
+    await page.getByRole("dialog").getByRole("button", { name: pl.notes.save }).click();
+    await page.getByRole("button", { name: pl.common.closeDialog }).click();
+
+    await entry.getByRole("button", { name: noteTitle }).click();
+    await page.getByRole("button", { name: pl.notes.edit }).click();
+    await page.getByRole("button", { name: pl.notes.removeFromEntry }).click();
+    await page.getByRole("button", { name: pl.notes.removeFromEntryConfirm }).click();
+
+    await expect(entry.getByRole("button", { name: noteTitle })).toHaveCount(0);
+  });
 });

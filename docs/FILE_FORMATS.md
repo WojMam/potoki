@@ -78,7 +78,7 @@ Markdown notes are plain `.md` files created with readable date-prefixed filenam
 
 ## linkedFiles
 
-Linked files are metadata only. POTOKI does not upload files and does not copy them unless a future explicit copy action is added.
+Linked files are metadata only. POTOKI does not upload files and does not copy them unless a future explicit copy action is added. Unlinking a file from a timeline entry removes only the reference; the file on disk is unchanged. Removing a Markdown note from an entry detaches it from that entry and deletes the `.md` file only when the path is not linked elsewhere in the workspace.
 
 ```json
 {

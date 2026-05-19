@@ -19,6 +19,7 @@ export const pl = {
     delete: "Usuń wpis",
     save: "Zapisz",
     attachNote: "Dodaj notatkę",
+    unlinkFile: "Odłącz plik od wpisu",
     typeWorkLog: "praca",
   },
   stream: {
@@ -31,6 +32,8 @@ export const pl = {
     titlePlaceholder: "Tytuł notatki",
     save: "Zapisz notatkę",
     edit: "Edytuj notatkę",
+    removeFromEntry: "Usuń notatkę z wpisu",
+    removeFromEntryConfirm: "Usuń z wpisu",
     markdownEditor: "Edytor Markdown",
   },
   markdown: {

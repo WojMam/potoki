@@ -1,4 +1,4 @@
-import { FileText } from "lucide-react";
+import { FileText, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import { Button } from "../../components/ui/button";
@@ -6,22 +6,31 @@ import { Dialog } from "../../components/ui/dialog";
 import { Textarea } from "../../components/ui/textarea";
 import { useI18n } from "../../core/i18n";
 
+export type FilePreviewContext = {
+  kind: "entry";
+  entryId: string;
+  streamId: string;
+};
+
 export type FilePreviewState = {
   path: string;
   label: string;
   type: string;
   content: string | null;
   isMarkdown: boolean;
+  context?: FilePreviewContext;
 };
 
 export function FilePreviewDialog({
   preview,
   onClose,
   onSave,
+  onRequestRemoveFromEntry,
 }: {
   preview: FilePreviewState | null;
   onClose: () => void;
   onSave: (path: string, markdown: string) => void;
+  onRequestRemoveFromEntry?: () => void;
 }) {
   const { t } = useI18n();
   const [editing, setEditing] = useState(false);
@@ -37,6 +46,10 @@ export function FilePreviewDialog({
     onSave(preview.path, draft);
     setEditing(false);
   };
+
+  const canRemoveFromEntry = Boolean(
+    editing && preview?.isMarkdown && preview.context?.kind === "entry" && onRequestRemoveFromEntry,
+  );
 
   return (
     <Dialog
@@ -54,19 +67,38 @@ export function FilePreviewDialog({
                 <span className="truncate">{preview.path}</span>
               </div>
               {preview.isMarkdown && preview.content !== null ? (
-                <div className="flex shrink-0 items-center gap-2">
+                <div className="flex shrink-0 flex-wrap items-center justify-end gap-2">
+                  {canRemoveFromEntry ? (
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      className="text-destructive-foreground/80 hover:bg-destructive/10 hover:text-destructive-foreground"
+                      onClick={onRequestRemoveFromEntry}
+                    >
+                      <Trash2 className="h-3.5 w-3.5" />
+                      {t("notes.removeFromEntry")}
+                    </Button>
+                  ) : null}
                   {editing ? (
                     <>
-                      <Button size="sm" variant="ghost" onClick={() => {
-                        setDraft(preview.content ?? "");
-                        setEditing(false);
-                      }}>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => {
+                          setDraft(preview.content ?? "");
+                          setEditing(false);
+                        }}
+                      >
                         {t("common.cancel")}
                       </Button>
-                      <Button size="sm" onClick={save}>{t("notes.save")}</Button>
+                      <Button size="sm" onClick={save}>
+                        {t("notes.save")}
+                      </Button>
                     </>
                   ) : (
-                    <Button size="sm" variant="secondary" onClick={() => setEditing(true)}>{t("notes.edit")}</Button>
+                    <Button size="sm" variant="secondary" onClick={() => setEditing(true)}>
+                      {t("notes.edit")}
+                    </Button>
                   )}
                 </div>
               ) : null}
