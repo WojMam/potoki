@@ -6,13 +6,14 @@ type FlowScrollAreaProps = {
   children: React.ReactNode;
   className?: string;
   viewportClassName?: string;
-};
+} & React.HTMLAttributes<HTMLElement>;
 
 export function FlowScrollArea({
   as: Component = "div",
   children,
   className,
   viewportClassName,
+  ...rest
 }: FlowScrollAreaProps) {
   const viewportRef = React.useRef<HTMLDivElement | null>(null);
   const trackRef = React.useRef<HTMLDivElement | null>(null);
@@ -108,6 +109,7 @@ export function FlowScrollArea({
 
   return (
     <Component
+      {...rest}
       className={cn("flow-scroll-area relative min-h-0 overflow-hidden", className)}
       data-flow-active={active ? "true" : "false"}
       data-flow-scrollable={scrollable ? "true" : "false"}

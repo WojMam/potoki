@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { WorkspaceAmbientShell } from "../components/ambient/WorkspaceAmbientShell";
 import { EmptyState } from "../components/layout/EmptyState";
 import { Button } from "../components/ui/button";
 import { ConfirmationDialog } from "../components/ui/confirmation-dialog";
@@ -454,7 +455,7 @@ export function App() {
   }
 
   return (
-    <div className="workspace-bg h-screen overflow-hidden text-foreground lg:flex">
+    <WorkspaceAmbientShell className="h-screen overflow-hidden text-foreground lg:flex">
       <StreamList
         workspaceName={manifest.name}
         streams={filteredStreams}
@@ -566,7 +567,7 @@ export function App() {
           <EmptyState title={t("stream.emptyTitle")} body={t("stream.emptyBody")} action={<Button onClick={() => setNewStreamOpen(true)}>{t("sidebar.new")}</Button>} />
         </div>
       ) : null}
-    </div>
+    </WorkspaceAmbientShell>
   );
 }
 

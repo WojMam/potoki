@@ -22,7 +22,7 @@ export function Dashboard({
 
   return (
     <FlowScrollArea as="main" className="h-screen min-h-0 flex-1" viewportClassName="overflow-x-hidden">
-      <div className="mx-auto w-full max-w-6xl px-8 py-12 xl:py-16">
+      <div className="mx-auto w-full max-w-6xl px-8 py-12 xl:py-16" data-no-ambient-ripple>
         <header className="max-w-4xl">
           <p className="section-label">{t("dashboard.eyebrow")}</p>
           <h1 className="mt-4 text-4xl font-semibold tracking-tight text-foreground xl:text-5xl">{t("dashboard.title")}</h1>

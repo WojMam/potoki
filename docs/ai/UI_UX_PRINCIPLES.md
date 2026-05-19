@@ -32,6 +32,7 @@
 - No playful bounce.
 - No flashy effects.
 - Flow indicator should feel ambient, not like a custom scrollbar gimmick.
+- A calm water ambient layer (slow wave drift, optional canvas ripples on background clicks) is allowed when it stays behind content and respects `prefers-reduced-motion`.
 
 ## Typography
 

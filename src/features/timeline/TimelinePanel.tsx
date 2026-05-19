@@ -93,7 +93,12 @@ export function TimelinePanel({
   };
 
   return (
-    <FlowScrollArea as="main" className="h-screen min-h-0 flex-1" viewportClassName="overflow-x-hidden">
+    <FlowScrollArea
+      as="main"
+      className="h-screen min-h-0 flex-1"
+      viewportClassName="overflow-x-hidden"
+      data-no-ambient-ripple
+    >
       <div className="mx-auto max-w-3xl px-8 py-12 xl:max-w-[820px]">
         <div className="mb-10">
           <button

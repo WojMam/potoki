@@ -6,9 +6,13 @@ on:
       - "v*"
   workflow_dispatch:
     inputs:
-      tag:
-        description: "Tag to create release for (for example: v1.0.0)"
-        required: true
+      version:
+        description: "Release version (optional; defaults to package.json). Tag is v-prefixed unless already v*."
+        required: false
+        type: string
+      changelog:
+        description: "Release notes body (optional; defaults to the matching section in CHANGELOG.md)"
+        required: false
         type: string
       release_name:
         description: "Release title (optional)"
@@ -40,30 +44,67 @@ jobs:
 
       - name: Resolve release metadata
         id: metadata
+        env:
+          VERSION_INPUT: ${{ github.event.inputs.version }}
+          CHANGELOG_INPUT: ${{ github.event.inputs.changelog }}
+          RELEASE_NAME_INPUT: ${{ github.event.inputs.release_name }}
         run: |
           APP_NAME="${GITHUB_REPOSITORY##*/}"
 
           if [[ "${GITHUB_REF_TYPE}" == "tag" ]]; then
             TAG="${GITHUB_REF_NAME}"
           else
-            TAG="${{ github.event.inputs.tag }}"
+            if [[ -z "${VERSION_INPUT}" ]]; then
+              VERSION_INPUT="$(node -p "require('./package.json').version")"
+            fi
+            if [[ "${VERSION_INPUT}" == v* ]]; then
+              TAG="${VERSION_INPUT}"
+            else
+              TAG="v${VERSION_INPUT}"
+            fi
           fi
+
           if [[ -z "${TAG}" ]]; then
-            echo "Error: release tag is empty. Provide a tag in workflow_dispatch or run on a tag push."
+            echo "Error: release tag is empty. Push a v* tag, provide version in workflow_dispatch, or set package.json version."
             exit 1
           fi
-          SAFE_TAG="$(echo "${TAG}" | sed 's/[^A-Za-z0-9._-]/-/g')"
 
-          RELEASE_NAME="${{ github.event.inputs.release_name }}"
+          SAFE_TAG="$(echo "${TAG}" | sed 's/[^A-Za-z0-9._-]/-/g')"
+          VERSION="${TAG#v}"
+
+          RELEASE_NAME="${RELEASE_NAME_INPUT}"
           if [[ -z "${RELEASE_NAME}" ]]; then
             RELEASE_NAME="Release ${TAG}"
           fi
 
           ZIP_NAME="${APP_NAME}-${SAFE_TAG}.zip"
 
-          echo "tag=${TAG}" >> "${GITHUB_OUTPUT}"
-          echo "release_name=${RELEASE_NAME}" >> "${GITHUB_OUTPUT}"
-          echo "zip_name=${ZIP_NAME}" >> "${GITHUB_OUTPUT}"
+          if [[ -n "${CHANGELOG_INPUT}" ]]; then
+            RELEASE_BODY="${CHANGELOG_INPUT}"
+          elif [[ -f CHANGELOG.md ]]; then
+            RELEASE_BODY="$(awk -v ver="${VERSION}" '
+              /^## \[/ {
+                if (found) exit
+                if ($0 ~ "\\[" ver "\\]") found=1
+                next
+              }
+              found && /^## / { exit }
+              found { print }
+            ' CHANGELOG.md | sed '/^[[:space:]]*$/d')"
+          fi
+
+          if [[ -z "${RELEASE_BODY}" ]]; then
+            RELEASE_BODY="See [CHANGELOG.md](CHANGELOG.md) for release notes."
+          fi
+
+          {
+            echo "tag=${TAG}"
+            echo "release_name=${RELEASE_NAME}"
+            echo "zip_name=${ZIP_NAME}"
+            echo "release_body<<RELEASE_BODY_EOF"
+            echo "${RELEASE_BODY}"
+            echo "RELEASE_BODY_EOF"
+          } >> "${GITHUB_OUTPUT}"
 
       - name: Package dist directory
         run: |
@@ -74,11 +115,19 @@ jobs:
           cd dist
           zip -r "../${{ steps.metadata.outputs.zip_name }}" .
 
+      - name: Write release notes artifact
+        env:
+          RELEASE_BODY: ${{ steps.metadata.outputs.release_body }}
+        run: printf '%s\n' "$RELEASE_BODY" > RELEASE_NOTES.md
+
       - name: Create release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ steps.metadata.outputs.tag }}
           name: ${{ steps.metadata.outputs.release_name }}
           target_commitish: ${{ github.sha }}
-          files: ${{ steps.metadata.outputs.zip_name }}
-          generate_release_notes: true
+          body: ${{ steps.metadata.outputs.release_body }}
+          files: |
+            ${{ steps.metadata.outputs.zip_name }}
+            RELEASE_NOTES.md
+          generate_release_notes: false

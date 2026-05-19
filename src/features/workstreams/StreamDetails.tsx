@@ -50,7 +50,10 @@ export function StreamDetails({
   };
 
   return (
-    <aside className="panel flex h-screen w-full shrink-0 flex-col overflow-hidden lg:w-[360px]">
+    <aside
+      className="panel flex h-screen w-full shrink-0 flex-col overflow-hidden lg:w-[360px]"
+      data-no-ambient-ripple
+    >
       <div className="shrink-0 px-5 pb-3 pt-5">
         <div className="flex items-center justify-between gap-4">
           <div>

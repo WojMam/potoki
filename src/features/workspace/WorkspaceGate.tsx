@@ -1,4 +1,5 @@
 import { FolderOpen, PlusCircle } from "lucide-react";
+import { WorkspaceAmbientShell } from "../../components/ambient/WorkspaceAmbientShell";
 import { FlowScrollArea } from "../../components/layout/FlowScrollArea";
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
@@ -20,8 +21,9 @@ export function WorkspaceGate({ workspaceName, setWorkspaceName, onOpen, onCreat
   const { t } = useI18n();
   const supported = FileSystemAccessAdapter.isSupported();
   return (
-    <FlowScrollArea as="main" className="workspace-bg h-screen" viewportClassName="px-5 py-10">
-      <section className="mx-auto flex min-h-[calc(100vh-5rem)] max-w-4xl flex-col justify-center">
+    <WorkspaceAmbientShell className="h-screen">
+      <FlowScrollArea as="main" className="h-screen" viewportClassName="px-5 py-10">
+        <section className="mx-auto flex min-h-[calc(100vh-5rem)] max-w-4xl flex-col justify-center">
         <div className="mb-8">
           <p className="flex items-center gap-2 text-sm font-medium text-primary">
             <span className="grid h-8 w-8 place-items-center rounded-lg border border-primary/18 bg-primary/[0.085] shadow-[inset_0_1px_0_rgba(255,255,255,0.035)]">
@@ -63,7 +65,8 @@ export function WorkspaceGate({ workspaceName, setWorkspaceName, onOpen, onCreat
             {error ? <p className="mt-4 rounded-md border border-destructive/40 bg-destructive/10 p-3 text-sm text-destructive-foreground">{error}</p> : null}
           </Card>
         )}
-      </section>
-    </FlowScrollArea>
+        </section>
+      </FlowScrollArea>
+    </WorkspaceAmbientShell>
   );
 }

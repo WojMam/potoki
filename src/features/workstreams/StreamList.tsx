@@ -37,7 +37,10 @@ export function StreamList({
 }) {
   const { t } = useI18n();
   return (
-    <aside className={cn("panel relative flex h-screen w-full shrink-0 flex-col overflow-hidden bg-[hsl(218_18%_13.8%/0.72)] shadow-[inset_-1px_0_0_hsl(var(--primary)/0.045),inset_-2px_0_0_rgba(255,255,255,0.006)] transition-[width,background-color] duration-[240ms] ease-in-out", collapsed ? "bg-[hsl(218_18%_12%/0.34)] lg:w-20" : "lg:w-[292px]")}>
+    <aside
+      className={cn("panel relative flex h-screen w-full shrink-0 flex-col overflow-hidden bg-[hsl(218_18%_13.8%/0.72)] shadow-[inset_-1px_0_0_hsl(var(--primary)/0.045),inset_-2px_0_0_rgba(255,255,255,0.006)] transition-[width,background-color] duration-[240ms] ease-in-out", collapsed ? "bg-[hsl(218_18%_12%/0.34)] lg:w-20" : "lg:w-[292px]")}
+      data-no-ambient-ripple
+    >
       <div className={cn("flex items-center justify-between gap-1 px-4 pb-5 pt-6 transition-all duration-[240ms] ease-in-out", collapsed && "px-1.5 pb-4")}>
         <button type="button" onClick={() => onSelect(undefined)} className="flex min-w-0 items-center gap-3 text-left">
           <span className={cn("grid h-9 w-9 shrink-0 place-items-center rounded-lg border border-primary/18 bg-primary/[0.085] text-primary transition-all duration-[240ms] ease-in-out shadow-[inset_0_1px_0_rgba(255,255,255,0.035)]", collapsed ? "bg-primary/[0.065] text-primary/94 hover:bg-primary/[0.10] hover:text-primary-foreground" : "")}>
