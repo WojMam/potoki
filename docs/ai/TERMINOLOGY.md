@@ -31,6 +31,7 @@ Allowed internal types:
 
 - `note`
 - `decision`
+- `meeting`
 - `action_done`
 - `waiting`
 - `work_log`

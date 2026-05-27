@@ -157,6 +157,7 @@ export function normalizeTimelineEntryType(type: unknown): TimelineEntryType {
   if (type === "worklog") return "work_log";
   if (type === "file" || type === "link") return "file_link";
   if (type === "done" || type === "completed") return "action_done";
+  if (type === "spotkanie") return "meeting";
   return "note";
 }
 

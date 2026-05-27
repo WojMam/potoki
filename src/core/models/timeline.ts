@@ -3,6 +3,7 @@ import type { LinkedFile } from "./fileLink";
 export const timelineEntryTypes = [
   "note",
   "decision",
+  "meeting",
   "action_done",
   "waiting",
   "work_log",

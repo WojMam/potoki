@@ -3,20 +3,20 @@ import { useEffect, useState, type KeyboardEvent } from "react";
 import { FlowScrollArea } from "../../components/layout/FlowScrollArea";
 import { Badge } from "../../components/ui/badge";
 import { Button } from "../../components/ui/button";
-import { Select } from "../../components/ui/select";
 import { Textarea } from "../../components/ui/textarea";
 import { Input } from "../../components/ui/input";
 import { isMarkdownLinkedFile } from "../../core/data/linkedFiles";
 import { useI18n } from "../../core/i18n";
 import type { LinkedFile } from "../../core/models/fileLink";
 import type { TimelineEntry, TimelineEntryType } from "../../core/models/timeline";
-import { timelineEntryTypes } from "../../core/models/timeline";
 import type { Workstream } from "../../core/models/workstream";
 import { formatDate, formatDateTime } from "../../core/utils/date";
+import { TimelineEntryTypeBadge, TimelineEntryTypeSelect } from "./timelineEntryTypeVisual";
 
 const typeAccent: Record<TimelineEntryType, string> = {
   note: "border-l-primary/14",
   decision: "border-l-primary/38 bg-primary/[0.014]",
+  meeting: "border-l-primary/32 bg-primary/[0.01]",
   action_done: "border-l-primary/24",
   waiting: "border-l-muted-foreground/16 opacity-90",
   work_log: "border-l-primary/20 bg-primary/[0.006]",
@@ -50,7 +50,7 @@ export function TimelinePanel({
   onDeleteEntry: (entry: TimelineEntry) => void;
   onBackToDashboard: () => void;
 }) {
-  const { statusLabel, t, timelineTypeLabel } = useI18n();
+  const { statusLabel, t } = useI18n();
   const [editingId, setEditingId] = useState<string | null>(null);
   const [entryEdit, setEntryEdit] = useState({ title: "", content: "" });
 
@@ -127,13 +127,7 @@ export function TimelinePanel({
             </div>
           </div>
           <div className="grid gap-3 md:grid-cols-[164px_1fr]">
-            <Select value={draft.type} onChange={(event) => setDraft({ ...draft, type: event.target.value as TimelineEntryType })}>
-              {timelineEntryTypes.map((type) => (
-                <option key={type} value={type}>
-                  {timelineTypeLabel(type)}
-                </option>
-              ))}
-            </Select>
+            <TimelineEntryTypeSelect value={draft.type} onChange={(type) => setDraft({ ...draft, type })} />
             <Input
               value={draft.title}
               onChange={(event) => setDraft({ ...draft, title: event.target.value })}
@@ -171,7 +165,7 @@ export function TimelinePanel({
                     >
                       <div className="flex flex-wrap items-center justify-between gap-2">
                         <div className="flex min-w-0 flex-1 items-center gap-2">
-                          <Badge className="bg-transparent px-0 text-[9.5px] tracking-[0.13em] text-muted-foreground/58">{timelineTypeLabel(entry.type)}</Badge>
+                          <TimelineEntryTypeBadge type={entry.type} />
                           {editing ? (
                             <Input
                               value={entryEdit.title}

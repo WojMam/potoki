@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **Timeline entry type `meeting`** — new quick-entry option (PL: spotkanie) with placeholder hints in PL/EN.
+- **Timeline entry type icons** — subtle Lucide icons on the type picker and on each entry badge for quicker scanning.
+- **Favicon** — POTOKI mark inlined into production `index.html` (data URI); `public/favicon.svg` served in dev only.
+
 ## [0.1.4] - 2026-05-19
 
 ### Changed

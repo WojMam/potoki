@@ -1,6 +1,6 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
-import { readFileSync, rmSync, writeFileSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync, rmSync, writeFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -8,6 +8,10 @@ const rootDir = dirname(fileURLToPath(import.meta.url));
 
 function escapeInlineScript(source: string) {
   return source.replace(/<\/script/gi, "<\\/script").replace(/<!--/g, "<\\!--");
+}
+
+function svgToDataUri(svg: string) {
+  return `data:image/svg+xml,${encodeURIComponent(svg.trim())}`;
 }
 
 function makeStaticBuildFileFriendly() {
@@ -43,8 +47,23 @@ function makeStaticBuildFileFriendly() {
         html = html.replace("</body>", () => `    ${inlineScripts.join("\n")}\n  </body>`);
       }
 
+      const faviconPath = resolve(rootDir, "public/favicon.svg");
+      if (existsSync(faviconPath)) {
+        const faviconHref = svgToDataUri(readFileSync(faviconPath, "utf-8"));
+        html = html.replace(
+          /<link rel="icon"[^>]*>/,
+          `<link rel="icon" type="image/svg+xml" href="${faviconHref}" />`,
+        );
+      }
+
       writeFileSync(indexPath, html);
       rmSync(assetsPath, { force: true, recursive: true });
+
+      for (const entry of readdirSync(distPath)) {
+        if (entry !== "index.html") {
+          rmSync(resolve(distPath, entry), { force: true, recursive: true });
+        }
+      }
     },
   };
 }

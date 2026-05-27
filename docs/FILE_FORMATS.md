@@ -66,7 +66,7 @@ Older status values may appear in legacy files. POTOKI normalizes unsupported or
 }
 ```
 
-Allowed timeline types: `note`, `decision`, `action_done`, `waiting`, `work_log`, `file_link`.
+Allowed timeline types: `note`, `decision`, `meeting`, `action_done`, `waiting`, `work_log`, `file_link`.
 
 The `waiting` timeline type is retained for file compatibility and is displayed in the UI as a parked note.
 
