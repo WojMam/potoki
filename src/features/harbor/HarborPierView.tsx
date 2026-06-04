@@ -35,7 +35,7 @@ export function HarborPierView({
   }, [cards, pier.id, query]);
 
   return (
-    <FlowScrollArea className="h-full min-h-0" viewportClassName="px-6 py-8 lg:px-10">
+    <FlowScrollArea as="main" className="h-full min-h-0" viewportClassName="px-6 py-8 lg:px-10">
       <div className="mx-auto max-w-3xl">
         <button
           type="button"

@@ -20,7 +20,20 @@ test.describe("Harbor @smoke", () => {
 
   test("should show harbor home with empty piers state", async ({ page }) => {
     await expect(page.getByRole("heading", { name: pl.harbor.title, level: 1 })).toBeVisible();
-    await expect(page.getByText(/Nie ma jeszcze pomostów/)).toBeVisible();
+    await expect(sidebar(page).getByRole("button", { name: pl.harbor.newPier })).toBeVisible();
+    await expect(page.getByRole("main").getByText(/Nie ma jeszcze pomostów/)).toBeVisible();
+  });
+
+  test("should list piers and cards in the sidebar", async ({ page }) => {
+    await createHarborPier(page, "SQL E2E", "Zapytania testowe");
+    await expect(sidebar(page).getByRole("button", { name: "SQL E2E" })).toBeVisible();
+    await sidebar(page).getByRole("button", { name: "SQL E2E" }).click();
+    await page.getByRole("button", { name: pl.harbor.newCard }).click();
+    const dialog = page.getByRole("dialog");
+    await dialog.getByPlaceholder(pl.harbor.cardTitlePlaceholder).fill("Pierwszy SELECT");
+    await dialog.getByLabel(pl.harbor.cardContentPlaceholder).fill("SELECT 1");
+    await saveHarborCardDialog(page);
+    await expect(sidebar(page).getByRole("button", { name: "Pierwszy SELECT" })).toBeVisible();
   });
 
   test("should switch between Potoki and Przystań", async ({ page }) => {
@@ -54,7 +67,7 @@ test.describe("Harbor @critical", () => {
     await expect(dialog.locator("code.hljs")).toContainText("SELECT");
     await saveHarborCardDialog(page);
 
-    await page.getByRole("button", { name: cardTitle }).click();
+    await page.getByRole("main").getByRole("button", { name: cardTitle }).click();
     await expect(page.getByRole("heading", { name: cardTitle, level: 1 })).toBeVisible();
     await expect(page.locator("code.hljs")).toContainText("users");
 
@@ -72,6 +85,7 @@ test.describe("Harbor @critical", () => {
     await confirmDelete(page);
 
     await expect(page.getByRole("button", { name: cardTitle })).toHaveCount(0);
+    await expect(sidebar(page).getByRole("button", { name: cardTitle })).toHaveCount(0);
   });
 
   test("should filter cards with pier search", async ({ page }) => {
@@ -87,8 +101,8 @@ test.describe("Harbor @critical", () => {
     await saveHarborCardDialog(page);
 
     await page.getByPlaceholder(pl.harbor.searchCards).fill("Widoczna");
-    await expect(page.getByRole("button", { name: "Widoczna karta" })).toBeVisible();
-    await expect(page.getByRole("button", { name: "Ukryta karta" })).toHaveCount(0);
+    await expect(page.getByRole("main").getByRole("button", { name: "Widoczna karta" })).toBeVisible();
+    await expect(page.getByRole("main").getByRole("button", { name: "Ukryta karta" })).toHaveCount(0);
   });
 });
 
@@ -98,7 +112,8 @@ test.describe("Harbor compatibility @regression", () => {
     await goToHarbor(page);
 
     await expect(page.getByRole("heading", { name: pl.harbor.title, level: 1 })).toBeVisible();
-    await expect(page.getByText(/Nie ma jeszcze pomostów/)).toBeVisible();
+    await expect(sidebar(page).getByRole("button", { name: pl.harbor.newPier })).toBeVisible();
+    await expect(page.getByRole("main").getByText(/Nie ma jeszcze pomostów/)).toBeVisible();
 
     await goToPotoki(page);
     await expect(sidebar(page).getByRole("button", { name: pl.stream.test })).toBeVisible();

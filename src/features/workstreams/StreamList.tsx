@@ -5,7 +5,9 @@ import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
 import { cn } from "../../components/ui/utils";
 import { useI18n } from "../../core/i18n";
+import type { HarborCard, Pier } from "../../core/models/harbor";
 import type { Workstream, WorkstreamStatus } from "../../core/models/workstream";
+import { HarborSidebarNav } from "../harbor/HarborSidebarNav";
 
 const filters: Array<"all" | WorkstreamStatus> = ["all", "active", "parked", "archived"];
 
@@ -17,10 +19,16 @@ export function StreamList({
   query,
   filter,
   activeModule,
+  piers,
+  harborCards,
+  selectedPierId,
+  selectedCardId,
   onModuleChange,
   onQueryChange,
   onFilterChange,
   onSelect,
+  onSelectPier,
+  onSelectCard,
   onNavigateHome,
   onToggleCollapsed,
   onNew,
@@ -33,10 +41,16 @@ export function StreamList({
   query: string;
   filter: "all" | WorkstreamStatus;
   activeModule: AppModule;
+  piers: Pier[];
+  harborCards: HarborCard[];
+  selectedPierId?: string;
+  selectedCardId?: string;
   onModuleChange: (module: AppModule) => void;
   onQueryChange: (value: string) => void;
   onFilterChange: (value: "all" | WorkstreamStatus) => void;
   onSelect: (id?: string) => void;
+  onSelectPier: (pierId: string) => void;
+  onSelectCard: (cardId: string) => void;
   onNavigateHome: () => void;
   onToggleCollapsed: () => void;
   onNew: () => void;
@@ -106,7 +120,8 @@ export function StreamList({
       <div
         className={cn(
           "min-h-0 flex-1 overflow-hidden px-3 py-2 transition-all duration-[240ms] ease-in-out",
-          (collapsed || activeModule !== "potoki") && "pointer-events-none px-0 opacity-0",
+          collapsed && "pointer-events-none px-0 opacity-0",
+          !collapsed && activeModule !== "potoki" && activeModule !== "harbor" && "pointer-events-none px-0 opacity-0",
         )}
       >
         {!collapsed && activeModule === "potoki"
@@ -130,6 +145,16 @@ export function StreamList({
               </button>
             ))
           : null}
+        {!collapsed && activeModule === "harbor" ? (
+          <HarborSidebarNav
+            piers={piers}
+            cards={harborCards}
+            selectedPierId={selectedPierId}
+            selectedCardId={selectedCardId}
+            onSelectPier={onSelectPier}
+            onSelectCard={onSelectCard}
+          />
+        ) : null}
       </div>
       <div
         className={cn(
@@ -143,14 +168,14 @@ export function StreamList({
           </Button>
         ) : (
           <div className="relative rounded-2xl bg-gradient-to-b from-white/[0.022] to-white/[0.012] p-1.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.014)]">
-            {activeModule === "potoki" ? (
+            {activeModule === "potoki" || activeModule === "harbor" ? (
             <button
               type="button"
               onClick={onNew}
               className="flex w-full items-center gap-2.5 rounded-xl bg-primary/[0.052] px-3 py-2.5 text-left text-sm font-medium text-foreground/92 shadow-[inset_0_0_0_1px_hsl(var(--primary)/0.075)] transition duration-200 ease-out hover:-translate-y-px hover:bg-primary/[0.074] hover:shadow-[inset_0_0_0_1px_hsl(var(--primary)/0.11),0_8px_20px_hsl(var(--primary)/0.035)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/28"
             >
               <Plus className="h-4 w-4 text-primary/88" />
-              <span>{t("sidebar.new")}</span>
+              <span>{activeModule === "harbor" ? t("harbor.newPier") : t("sidebar.new")}</span>
             </button>
             ) : null}
             <button

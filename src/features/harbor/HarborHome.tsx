@@ -23,7 +23,7 @@ export function HarborHome({
   }, {});
 
   return (
-    <FlowScrollArea className="h-full min-h-0" viewportClassName="px-6 py-8 lg:px-10">
+    <FlowScrollArea as="main" className="h-full min-h-0" viewportClassName="px-6 py-8 lg:px-10">
       <div className="mx-auto max-w-3xl">
         <header className="mb-10">
           <p className="flex items-center gap-2 text-sm font-medium text-primary">

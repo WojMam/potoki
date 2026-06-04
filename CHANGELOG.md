@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.1] - 2026-06-04
+
+### Added
+
+- **Przystań — nawigacja w sidebarze** — pomosty i karty (pod wybranym pomostem) na lewym pasku; przycisk „Nowy pomost” w stopce sidebara.
+- **E2E: sidebar Przystani** — smoke sprawdzający listę pomostów i kart w `aside`.
+
+### Fixed
+
+- **TypeScript** — jawne zależności `@types/react` i `@types/react-dom` (błąd „Cannot find type definition file for 'react'” w IDE).
+
 ## [0.2.0] - 2026-05-19
 
 ### Added

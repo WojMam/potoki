@@ -796,13 +796,36 @@ export function App() {
         query={query}
         filter={filter}
         activeModule={activeModule}
+        piers={piers}
+        harborCards={harborCards}
+        selectedPierId={selectedPierId}
+        selectedCardId={selectedCardId}
         onModuleChange={switchModule}
         onQueryChange={setQuery}
         onFilterChange={setFilter}
         onSelect={setSelectedId}
+        onSelectPier={(pierId) => {
+          setSelectedPierId(pierId);
+          setSelectedCardId(undefined);
+          setHarborCardContent("");
+        }}
+        onSelectCard={(cardId) => {
+          const card = harborCards.find((item) => item.id === cardId);
+          if (!card) return;
+          setSelectedPierId(card.pierId);
+          setSelectedCardId(cardId);
+        }}
         onNavigateHome={navigateHome}
         onToggleCollapsed={() => setSidebarCollapsed((value) => !value)}
-        onNew={() => setNewStreamOpen(true)}
+        onNew={() => {
+          if (activeModule === "harbor") {
+            setPierName("");
+            setPierDescription("");
+            setPierDialogOpen(true);
+            return;
+          }
+          setNewStreamOpen(true);
+        }}
         onOpenSettings={() => setSettingsOpen(true)}
       />
       <div className="min-h-0 min-w-0 flex-1 transition-[width] duration-[240ms] ease-in-out lg:flex">
