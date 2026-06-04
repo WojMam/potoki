@@ -1,6 +1,8 @@
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
+import type { HarborCardSyntax } from "../models/harbor";
 import type { TimelineEntryType } from "../models/timeline";
 import type { WorkstreamStatus } from "../models/workstream";
+import { harborSyntaxLabelKey } from "./harborSyntax";
 import { en } from "./translations.en";
 import { pl } from "./translations.pl";
 
@@ -17,6 +19,7 @@ type I18nContextValue = {
   t: (key: TranslationKey, params?: Record<string, string | number>) => string;
   statusLabel: (status: WorkstreamStatus) => string;
   timelineTypeLabel: (type: TimelineEntryType) => string;
+  harborSyntaxLabel: (syntax: HarborCardSyntax) => string;
 };
 
 const I18nContext = createContext<I18nContextValue | null>(null);
@@ -49,6 +52,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
       t,
       statusLabel: (status) => t(`status.${status}` as TranslationKey),
       timelineTypeLabel: (type) => t(`timeline.type.${type}` as TranslationKey),
+      harborSyntaxLabel: (syntax) => t(harborSyntaxLabelKey(syntax)),
     };
   }, [language]);
 

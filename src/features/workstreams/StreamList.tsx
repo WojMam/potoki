@@ -1,4 +1,5 @@
 import { Archive, Circle, PanelLeftClose, PanelLeftOpen, Pause, Plus, Search, Settings } from "lucide-react";
+import { ModuleSwitch, type AppModule } from "../../components/layout/ModuleSwitch";
 import { PotokiMark } from "../../components/brand/PotokiMark";
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
@@ -15,9 +16,12 @@ export function StreamList({
   collapsed,
   query,
   filter,
+  activeModule,
+  onModuleChange,
   onQueryChange,
   onFilterChange,
   onSelect,
+  onNavigateHome,
   onToggleCollapsed,
   onNew,
   onOpenSettings,
@@ -28,9 +32,12 @@ export function StreamList({
   collapsed: boolean;
   query: string;
   filter: "all" | WorkstreamStatus;
+  activeModule: AppModule;
+  onModuleChange: (module: AppModule) => void;
   onQueryChange: (value: string) => void;
   onFilterChange: (value: "all" | WorkstreamStatus) => void;
   onSelect: (id?: string) => void;
+  onNavigateHome: () => void;
   onToggleCollapsed: () => void;
   onNew: () => void;
   onOpenSettings: () => void;
@@ -42,7 +49,7 @@ export function StreamList({
       data-no-ambient-ripple
     >
       <div className={cn("flex items-center justify-between gap-1 px-4 pb-5 pt-6 transition-all duration-[240ms] ease-in-out", collapsed && "px-1.5 pb-4")}>
-        <button type="button" onClick={() => onSelect(undefined)} className="flex min-w-0 items-center gap-3 text-left">
+        <button type="button" onClick={onNavigateHome} className="flex min-w-0 items-center gap-3 text-left">
           <span className={cn("grid h-9 w-9 shrink-0 place-items-center rounded-lg border border-primary/18 bg-primary/[0.085] text-primary transition-all duration-[240ms] ease-in-out shadow-[inset_0_1px_0_rgba(255,255,255,0.035)]", collapsed ? "bg-primary/[0.065] text-primary/94 hover:bg-primary/[0.10] hover:text-primary-foreground" : "")}>
             <PotokiMark className="h-[21px] w-[21px] transition-all duration-[240ms] ease-in-out" />
           </span>
@@ -63,7 +70,14 @@ export function StreamList({
         </Button>
       </div>
 
-      <div className={cn("overflow-hidden transition-all duration-[140ms] ease-in-out", collapsed ? "pointer-events-none max-h-0 -translate-x-2 opacity-0" : "max-h-48 translate-x-0 opacity-100")}>
+      <ModuleSwitch value={activeModule} onChange={onModuleChange} collapsed={collapsed} />
+
+      <div
+        className={cn(
+          "overflow-hidden transition-all duration-[140ms] ease-in-out",
+          collapsed || activeModule !== "potoki" ? "pointer-events-none max-h-0 -translate-x-2 opacity-0" : "max-h-48 translate-x-0 opacity-100",
+        )}
+      >
         <div className="px-5 pb-4">
           <div className="relative rounded-xl bg-black/[0.105] p-1 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.018),inset_0_1px_8px_rgba(0,0,0,0.18)] transition duration-200 ease-out focus-within:bg-primary/[0.026] focus-within:shadow-[inset_0_0_0_1px_hsl(var(--primary)/0.13),inset_0_1px_8px_rgba(0,0,0,0.16)]">
             <Search className="pointer-events-none absolute left-5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground/75 transition-colors focus-within:text-primary" />
@@ -89,8 +103,13 @@ export function StreamList({
         </div>
       </div>
 
-      <div className={cn("min-h-0 flex-1 overflow-hidden px-3 py-2 transition-all duration-[240ms] ease-in-out", collapsed && "pointer-events-none px-0 opacity-0")}>
-        {!collapsed
+      <div
+        className={cn(
+          "min-h-0 flex-1 overflow-hidden px-3 py-2 transition-all duration-[240ms] ease-in-out",
+          (collapsed || activeModule !== "potoki") && "pointer-events-none px-0 opacity-0",
+        )}
+      >
+        {!collapsed && activeModule === "potoki"
           ? streams.map((stream) => (
               <button
                 key={stream.id}
@@ -124,6 +143,7 @@ export function StreamList({
           </Button>
         ) : (
           <div className="relative rounded-2xl bg-gradient-to-b from-white/[0.022] to-white/[0.012] p-1.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.014)]">
+            {activeModule === "potoki" ? (
             <button
               type="button"
               onClick={onNew}
@@ -132,6 +152,7 @@ export function StreamList({
               <Plus className="h-4 w-4 text-primary/88" />
               <span>{t("sidebar.new")}</span>
             </button>
+            ) : null}
             <button
               type="button"
               onClick={onOpenSettings}

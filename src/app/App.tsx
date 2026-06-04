@@ -1,14 +1,17 @@
 import { useEffect, useMemo, useState } from "react";
 import { WorkspaceAmbientShell } from "../components/ambient/WorkspaceAmbientShell";
 import { EmptyState } from "../components/layout/EmptyState";
+import type { AppModule } from "../components/layout/ModuleSwitch";
 import { Button } from "../components/ui/button";
 import { ConfirmationDialog } from "../components/ui/confirmation-dialog";
 import { FileSystemAccessAdapter, type DirectoryHandle } from "../core/filesystem/FileSystemAccessAdapter";
 import type { LinkedFile } from "../core/models/fileLink";
 import type { TimelineEntry, TimelineEntryType } from "../core/models/timeline";
 import type { Workstream, WorkstreamStatus } from "../core/models/workstream";
+import type { HarborCard, HarborCardSyntax, HarborManifest, Pier } from "../core/models/harbor";
 import type { WorkspaceManifest } from "../core/models/workspace";
 import { useI18n } from "../core/i18n";
+import { HarborRepository } from "../core/repositories/HarborRepository";
 import { NoteRepository } from "../core/repositories/NoteRepository";
 import { StreamRepository } from "../core/repositories/StreamRepository";
 import { TimelineRepository } from "../core/repositories/TimelineRepository";
@@ -30,6 +33,11 @@ import { TimelinePanel } from "../features/timeline/TimelinePanel";
 import { WorkLogDialog } from "../features/timeline/WorkLogDialog";
 import { NewStreamDialog } from "../features/workstreams/NewStreamDialog";
 import { StreamDetails } from "../features/workstreams/StreamDetails";
+import { HarborCardDialog } from "../features/harbor/HarborCardDialog";
+import { HarborCardView } from "../features/harbor/HarborCardView";
+import { HarborHome } from "../features/harbor/HarborHome";
+import { HarborPierDialog } from "../features/harbor/HarborPierDialog";
+import { HarborPierView } from "../features/harbor/HarborPierView";
 import { StreamList } from "../features/workstreams/StreamList";
 import { WorkspaceGate } from "../features/workspace/WorkspaceGate";
 
@@ -38,6 +46,7 @@ type Repositories = {
   streams: StreamRepository;
   timeline: TimelineRepository;
   notes: NoteRepository;
+  harbor: HarborRepository;
 };
 
 type NoteDialogMode = { kind: "stream" } | { kind: "entry"; entry: TimelineEntry };
@@ -86,8 +95,29 @@ export function App() {
   const [deleteTarget, setDeleteTarget] = useState<DeleteTarget>(null);
   const [noteRemoveTarget, setNoteRemoveTarget] = useState<NoteRemoveTarget>(null);
   const [noteSaving, setNoteSaving] = useState(false);
+  const [activeModule, setActiveModule] = useState<AppModule>("potoki");
+  const [harborManifest, setHarborManifest] = useState<HarborManifest | null>(null);
+  const [piers, setPiers] = useState<Pier[]>([]);
+  const [harborCards, setHarborCards] = useState<HarborCard[]>([]);
+  const [selectedPierId, setSelectedPierId] = useState<string | undefined>();
+  const [selectedCardId, setSelectedCardId] = useState<string | undefined>();
+  const [harborCardContent, setHarborCardContent] = useState("");
+  const [harborCopyFeedback, setHarborCopyFeedback] = useState(false);
+  const [pierDialogOpen, setPierDialogOpen] = useState(false);
+  const [pierName, setPierName] = useState("");
+  const [pierDescription, setPierDescription] = useState("");
+  const [cardDialogOpen, setCardDialogOpen] = useState(false);
+  const [editingCard, setEditingCard] = useState<HarborCard | null>(null);
+  const [cardTitle, setCardTitle] = useState("");
+  const [cardDescription, setCardDescription] = useState("");
+  const [cardSyntax, setCardSyntax] = useState<HarborCardSyntax>("plain");
+  const [cardPierId, setCardPierId] = useState("");
+  const [cardContent, setCardContent] = useState("");
+  const [harborDeleteCard, setHarborDeleteCard] = useState<HarborCard | null>(null);
 
   const selectedStream = streams.find((stream) => stream.id === selectedId);
+  const selectedPier = piers.find((pier) => pier.id === selectedPierId);
+  const selectedHarborCard = harborCards.find((card) => card.id === selectedCardId);
   const selectedEntries = entries.filter((entry) => entry.streamId === selectedId);
 
   const filteredStreams = useMemo(
@@ -106,6 +136,25 @@ export function App() {
     setNewAction("");
   }, [selectedStream?.id]);
 
+  useEffect(() => {
+    if (!repos || !selectedHarborCard) {
+      setHarborCardContent("");
+      return;
+    }
+    let cancelled = false;
+    repos.harbor
+      .readCardContent(selectedHarborCard.contentPath)
+      .then((content) => {
+        if (!cancelled) setHarborCardContent(content);
+      })
+      .catch(() => {
+        if (!cancelled) setError(t("errors.readHarborCard"));
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [repos, selectedHarborCard?.id, selectedHarborCard?.contentPath]);
+
   async function wireRepositories(handle: DirectoryHandle) {
     adapter.clearCache();
     const nextRepos: Repositories = {
@@ -113,10 +162,25 @@ export function App() {
       streams: new StreamRepository(adapter, handle),
       timeline: new TimelineRepository(adapter, handle),
       notes: new NoteRepository(adapter, handle),
+      harbor: new HarborRepository(adapter, handle),
     };
     setRoot(handle);
     setRepos(nextRepos);
     return nextRepos;
+  }
+
+  async function refreshHarbor(nextRepos = repos) {
+    if (!nextRepos) return;
+    const harborResult = await nextRepos.harbor.loadAll();
+    setHarborManifest(harborResult.manifest);
+    setPiers(harborResult.piers);
+    setHarborCards(harborResult.cards);
+    if (harborResult.issues.length) {
+      setIssues((current) => [
+        ...current,
+        ...harborResult.issues.map((message) => ({ scope: "workspace" as const, message })),
+      ]);
+    }
   }
 
   async function refresh(nextRepos = repos, knownManifest = manifest) {
@@ -130,6 +194,31 @@ export function App() {
       ...streamResult.issues.map((message) => ({ scope: "streams" as const, message })),
       ...timelineResult.issues.map((message) => ({ scope: "timeline" as const, message })),
     ]);
+    await refreshHarbor(nextRepos);
+  }
+
+  function switchModule(module: AppModule) {
+    setActiveModule(module);
+    if (module === "potoki") {
+      setSelectedPierId(undefined);
+      setSelectedCardId(undefined);
+      setHarborCardContent("");
+    } else {
+      setSelectedId(undefined);
+      setSelectedPierId(undefined);
+      setSelectedCardId(undefined);
+      setHarborCardContent("");
+    }
+  }
+
+  function navigateHome() {
+    if (activeModule === "potoki") {
+      setSelectedId(undefined);
+      return;
+    }
+    setSelectedPierId(undefined);
+    setSelectedCardId(undefined);
+    setHarborCardContent("");
   }
 
   async function openWorkspace() {
@@ -565,6 +654,107 @@ export function App() {
     }
   }
 
+  async function createPier() {
+    if (!repos || !pierName.trim()) return;
+    try {
+      await repos.harbor.createPier(pierName, pierDescription);
+      await repos.harbor.touch(harborManifest ?? (await repos.harbor.ensureHarbor()));
+      setPierDialogOpen(false);
+      setPierName("");
+      setPierDescription("");
+      await refreshHarbor();
+      setError("");
+    } catch (err) {
+      setError(toFriendlyError(err, t("errors.harbor")));
+    }
+  }
+
+  function openNewCardDialog(pierId: string) {
+    setEditingCard(null);
+    setCardTitle("");
+    setCardDescription("");
+    setCardSyntax("plain");
+    setCardPierId(pierId);
+    setCardContent("");
+    setCardDialogOpen(true);
+  }
+
+  function openEditCardDialog(card: HarborCard) {
+    setEditingCard(card);
+    setCardTitle(card.title);
+    setCardDescription(card.description ?? "");
+    setCardSyntax(card.syntax);
+    setCardPierId(card.pierId);
+    setCardContent(harborCardContent);
+    setCardDialogOpen(true);
+  }
+
+  async function saveHarborCard() {
+    if (!repos || !cardTitle.trim() || !cardPierId) return;
+    try {
+      if (editingCard) {
+        await repos.harbor.saveCard(
+          {
+            ...editingCard,
+            title: cardTitle.trim(),
+            description: cardDescription.trim(),
+            syntax: cardSyntax,
+            pierId: cardPierId,
+          },
+          cardContent,
+        );
+      } else {
+        await repos.harbor.createCard(
+          cardPierId,
+          { title: cardTitle, description: cardDescription, syntax: cardSyntax },
+          cardContent,
+        );
+      }
+      if (harborManifest) await repos.harbor.touch(harborManifest);
+      setCardDialogOpen(false);
+      setEditingCard(null);
+      await refreshHarbor();
+      if (selectedCardId) {
+        const reloaded = (await repos.harbor.loadAll()).cards.find((c) => c.id === selectedCardId);
+        if (reloaded) setHarborCardContent(await repos.harbor.readCardContent(reloaded.contentPath));
+      }
+      setError("");
+    } catch (err) {
+      setError(toFriendlyError(err, t("errors.harbor")));
+    }
+  }
+
+  async function confirmDeleteHarborCard() {
+    const target = harborDeleteCard;
+    if (!repos || !target) return;
+    setHarborDeleteCard(null);
+    try {
+      await repos.harbor.deleteCard(target);
+      if (harborManifest) await repos.harbor.touch(harborManifest);
+      setSelectedCardId(undefined);
+      setHarborCardContent("");
+      await refreshHarbor();
+      setError("");
+    } catch (err) {
+      setError(toFriendlyError(err, t("errors.harbor")));
+    }
+  }
+
+  async function copyHarborCard(card: HarborCard, content: string) {
+    if (!repos) return;
+    try {
+      await navigator.clipboard.writeText(content);
+      const updated = await repos.harbor.markCardUsed(card);
+      setHarborCards((current) => current.map((item) => (item.id === updated.id ? updated : item)));
+      if (harborManifest) await repos.harbor.touch(harborManifest);
+      setHarborCopyFeedback(true);
+      window.setTimeout(() => setHarborCopyFeedback(false), 1800);
+      setError("");
+    } catch (err) {
+      setError(toFriendlyError(err, t("errors.harbor")));
+    }
+  }
+
   function openStreamNoteDialog() {
     setNoteMode({ kind: "stream" });
     setNoteTitle("");
@@ -605,15 +795,49 @@ export function App() {
         collapsed={sidebarCollapsed}
         query={query}
         filter={filter}
+        activeModule={activeModule}
+        onModuleChange={switchModule}
         onQueryChange={setQuery}
         onFilterChange={setFilter}
         onSelect={setSelectedId}
+        onNavigateHome={navigateHome}
         onToggleCollapsed={() => setSidebarCollapsed((value) => !value)}
         onNew={() => setNewStreamOpen(true)}
         onOpenSettings={() => setSettingsOpen(true)}
       />
       <div className="min-h-0 min-w-0 flex-1 transition-[width] duration-[240ms] ease-in-out lg:flex">
-        {selectedStream ? (
+        {activeModule === "harbor" ? (
+          selectedHarborCard && selectedPier ? (
+            <HarborCardView
+              card={selectedHarborCard}
+              content={harborCardContent}
+              copyFeedback={harborCopyFeedback}
+              onBack={() => setSelectedCardId(undefined)}
+              onEdit={() => openEditCardDialog(selectedHarborCard)}
+              onDelete={() => setHarborDeleteCard(selectedHarborCard)}
+              onCopy={() => copyHarborCard(selectedHarborCard, harborCardContent)}
+            />
+          ) : selectedPier ? (
+            <HarborPierView
+              pier={selectedPier}
+              cards={harborCards}
+              onBack={() => setSelectedPierId(undefined)}
+              onSelectCard={setSelectedCardId}
+              onNewCard={() => openNewCardDialog(selectedPier.id)}
+            />
+          ) : (
+            <HarborHome
+              piers={piers}
+              cards={harborCards}
+              onSelectPier={setSelectedPierId}
+              onNewPier={() => {
+                setPierName("");
+                setPierDescription("");
+                setPierDialogOpen(true);
+              }}
+            />
+          )
+        ) : selectedStream ? (
           <>
             <TimelinePanel
               stream={selectedStream}
@@ -721,7 +945,43 @@ export function App() {
         onCancel={() => setNoteRemoveTarget(null)}
         onConfirm={confirmRemoveNoteFromEntry}
       />
-      {!streams.length ? (
+      <HarborPierDialog
+        open={pierDialogOpen}
+        name={pierName}
+        description={pierDescription}
+        setName={setPierName}
+        setDescription={setPierDescription}
+        onClose={() => setPierDialogOpen(false)}
+        onSave={createPier}
+      />
+      <HarborCardDialog
+        open={cardDialogOpen}
+        title={cardTitle}
+        description={cardDescription}
+        syntax={cardSyntax}
+        pierId={cardPierId}
+        content={cardContent}
+        piers={piers}
+        isEditing={Boolean(editingCard)}
+        setTitle={setCardTitle}
+        setDescription={setCardDescription}
+        setSyntax={setCardSyntax}
+        setPierId={setCardPierId}
+        setContent={setCardContent}
+        onClose={() => setCardDialogOpen(false)}
+        onSave={saveHarborCard}
+      />
+      <ConfirmationDialog
+        open={Boolean(harborDeleteCard)}
+        title={t("harbor.deleteCardTitle")}
+        body={t("harbor.deleteCardBody")}
+        detail={harborDeleteCard?.title}
+        cancelLabel={t("common.cancel")}
+        confirmLabel={t("harbor.delete")}
+        onCancel={() => setHarborDeleteCard(null)}
+        onConfirm={confirmDeleteHarborCard}
+      />
+      {!streams.length && activeModule === "potoki" ? (
         <div className="fixed inset-x-0 bottom-8 flex justify-center">
           <EmptyState title={t("stream.emptyTitle")} body={t("stream.emptyBody")} action={<Button onClick={() => setNewStreamOpen(true)}>{t("sidebar.new")}</Button>} />
         </div>

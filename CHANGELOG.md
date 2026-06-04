@@ -7,11 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-05-19
+
 ### Added
 
+- **Przystań (Harbor)** — optional workspace module for reusable knowledge cards: piers, syntax-highlighted snippets, copy-to-clipboard, and PL/EN UI. Data lives under `harbor/`; old workspaces without it keep working.
+- **E2E: Przystań** — smoke (module switch), critical (pier, card, copy, edit, delete, search), regression (workspace without `harbor/`).
 - **Timeline entry type `meeting`** — new quick-entry option (PL: spotkanie) with placeholder hints in PL/EN.
 - **Timeline entry type icons** — subtle Lucide icons on the type picker and on each entry badge for quicker scanning.
 - **Favicon** — POTOKI mark inlined into production `index.html` (data URI); `public/favicon.svg` served in dev only.
+
+### Fixed
+
+- **Harbor card dialog** — save and cancel buttons stay clickable; the syntax preview panel no longer covers the footer.
 
 ## [0.1.4] - 2026-05-19
 

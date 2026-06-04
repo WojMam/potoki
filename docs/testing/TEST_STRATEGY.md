@@ -20,6 +20,8 @@ Testy E2E **nie** mierzą pokrycia kodu ani poprawności implementacji repozytor
 | Toolbar Markdown (bold, italic, H2, lista, link) | Tak |
 | Ustawienia — zmiana języka PL/EN + reload | Tak |
 | Wczytanie legacy workspace (brak `schemaVersion`, stare pola) | Tak |
+| Przystań — moduł, pomosty, karty, kopiowanie, edycja, usuwanie | Tak |
+| Przystań na workspace bez `harbor/` (kompatybilność) | Tak |
 
 ## Czego NIE testujemy E2E
 
@@ -54,6 +56,7 @@ tests/
     settings.spec.ts
     markdown-editor.spec.ts
     data-compatibility.spec.ts
+    harbor.spec.ts
   fixtures/
     workspaces/
       empty/

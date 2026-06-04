@@ -90,3 +90,23 @@ Linked files are metadata only. POTOKI does not upload files and does not copy t
 ```
 
 The `path` should be relative to the workspace root when possible.
+
+## harbor/ (optional)
+
+Przystań is optional. If the `harbor/` directory is missing, the app shows an empty Harbor and creates the structure on first use.
+
+```text
+harbor/
+  harbor.json
+  piers/
+    {pierId}.json
+  cards/
+    {pierId}/
+      {cardId}.json
+      {content files by syntax, e.g. query.sql}
+```
+
+- `harbor.json` — manifest (`schemaVersion`, `createdAt`, `updatedAt`).
+- `piers/{pierId}.json` — pier metadata (`id`, `name`, `description`, timestamps).
+- `cards/{pierId}/{cardId}.json` — card metadata (`id`, `pierId`, `title`, `syntax`, `contentPath`, timestamps, optional `lastUsedAt`).
+- Content files are referenced by `contentPath` (relative to workspace root).
